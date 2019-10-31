@@ -22,6 +22,19 @@ class ElibraryDB
         return $this->db->getAll($query, $this->organisations);
     }
 
+    function getOrganisationMain($id)
+    {
+        $query = 'SELECT `id`, `city`, `country`, `type` FROM ?n WHERE `id`=?s';
+        return $this->db->getRow($query, $this->organisations, $id);
+    }
+
+    function generateOrganisationGraphId($id)
+    {
+        $info = $this->getOrganisationMain($id);
+
+        return $info['country'] . '.' . $info['city'] . '.' . $info['id'];
+    }
+
     function getAllOrganisationsIds()
     {
         $query = 'SELECT `id` FROM ?n';
