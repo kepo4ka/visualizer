@@ -63,7 +63,7 @@ $length = 100;
         height = +svg.attr("height");
 
 
-    let diameter = 21000,
+    let diameter = 10000,
         radius = diameter / 2,
         innerRadius = radius - 120;
 
@@ -71,7 +71,7 @@ $length = 100;
         .size([360, innerRadius]);
 
     let line = d3.radialLine()
-        .curve(d3.curveBundle.beta(0.85))
+        .curve(d3.curveBundle.beta(1))
         .radius(function (d) {
             return d.y;
         })
@@ -88,12 +88,19 @@ $length = 100;
         .attr("width", width)
         .attr("height", height)
         .call(d3.zoom()
-            .scaleExtent([0.001, 100])
+            .scaleExtent([0.0001, 100])
             .on("zoom", zoom));
 
     function zoom() {
+        console.log(d3.event.transform);
         g.attr("transform", d3.event.transform);
     }
+
+    // first_zoom();
+    // function first_zoom() {
+    //     var t = d3.zoomIdentity.translate(800, 400).scale(0.04);
+    //     g.attr("transform", t);
+    // }
 
     let link = g.selectAll(".link"),
         node = g.selectAll(".node");
