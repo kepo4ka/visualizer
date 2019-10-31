@@ -1,0 +1,45 @@
+[
+  {
+    "id": "100001334",
+    "name": "AMIF.100001334",
+    "title": "Ontologies in HYDRA - Middleware for Ambient Intelligent Devices.",
+
+    "venue": {
+      "raw": "AMIF"
+    },
+    "year": 2009,
+
+    "imports": [
+      "AMIF.1000018889"
+    ]
+
+  },
+  {
+    "id": "1000018889",
+    "name": "AMIF.1000018889",
+    "imports": [
+      "AMIF.100001334"
+    ],
+    "title": "Remote Policy Enforcement for Trusted Application Execution in Mobile Environments",
+
+    "venue": {
+      "id": "AMIF"
+    },
+    "year": 2013,
+
+    "references": [
+      "94181602",
+      "1504669610",
+      "1542792105",
+      "1639158619",
+      "1966825932",
+      "2050529434",
+      "2055456945",
+      "2084871158",
+      "2140911579",
+      "2141935522",
+      "2145187482",
+      "2408322241"
+    ]
+  }
+]
