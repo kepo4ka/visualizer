@@ -2,7 +2,17 @@
 
 require_once('init.php');
 
+
 $length = 100;
+$beta = 1;
+
+if (!empty($_GET['l'])) {
+    $length = (int)$_GET['l'];
+}
+
+if (!empty($_GET['b'])) {
+    $beta = (float)$_GET['b'];
+}
 
 // $users = \JsonMachine\JsonMachine::fromFile('dblp_papers_v11.json');
 
@@ -71,7 +81,7 @@ $length = 100;
         .size([360, innerRadius]);
 
     let line = d3.radialLine()
-        .curve(d3.curveBundle.beta(1))
+        .curve(d3.curveBundle.beta(<?=$beta?>))
         .radius(function (d) {
             return d.y;
         })
@@ -105,7 +115,7 @@ $length = 100;
     let link = g.selectAll(".link"),
         node = g.selectAll(".node");
 
-    d3.json("ajax.php", function (error, classes) {
+    d3.json("ajax.php?l=<?=$length?>", function (error, classes) {
         if (error) throw error;
 
         let

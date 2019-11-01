@@ -3,6 +3,12 @@
 require 'init.php';
 
 
+$length = 100;
+
+if (!empty($_GET['l'])) {
+    $length = (int)$_GET['l'];
+}
+
 $elibDb = new ElibraryDB();
 
 $graph_organisations = [];
@@ -32,7 +38,7 @@ foreach ($organisations_db as $org_info) {
     }
 
 
-    if ($k > 1000) {
+    if ($k > $length) {
         break;
     }
     $k++;
