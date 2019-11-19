@@ -552,7 +552,7 @@ class SafeMySQL
             return 'NULL';
         }
         if (is_array($value)) {
-            echoVarDumpPre($value);
+//            echoVarDumpPre($value);
         }
 
         return "'" . mysqli_real_escape_string($this->conn, $value) . "'";

@@ -1,11 +1,11 @@
 <?php
-require_once 'lib/safemysql.class.php';
+require_once __DIR__ . '/lib/safemysql.class.php';
 
-require_once 'config.php';
+require_once __DIR__ . '/config.php';
 
-require_once 'functions.php';
-require_once 'class/ElibraryDB.php';
-require_once 'class/ElibraryDB.php';
+require_once __DIR__ . '/functions.php';
+require_once __DIR__ . '/class/ElibraryDB.php';
+require_once __DIR__ . '/class/GraphData.php';
 
 $user = 'root';
 $pass = '';
