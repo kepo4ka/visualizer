@@ -12,7 +12,7 @@ if (!empty($_GET['l'])) {
 if (!empty($_GET['type'])) {
     $type = preg_replace('/[^\w]/m', '', $_GET['type']);
 } else {
-    $type = 'OrganisationsRelByPublicationsCoAuthors';
+    $type = 'AuthorsRelByPublications';
 }
 
 if (empty($type)) {
@@ -33,6 +33,9 @@ switch ($type) {
         $info = $graph_data->OrganisationsRelByPublicationsCoAuthors(true, $length);
         break;
 
+    case 'AuthorsRelByPublications':
+        $info = $graph_data->AuthorsRelByPublications(true, $length);
+        break;
 
 
 
