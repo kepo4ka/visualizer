@@ -8,7 +8,7 @@ class ElibraryDB
     var $publications = 'publications';
     var $authors = 'authors';
     var $keywords = 'keywords';
-    var $authors_to_organsations = 'authors_to_organsations';
+    var $authors_to_organisations = 'authors_to_organisations';
     var $publications_to_organisations = 'publications_to_organisations';
     var $publications_to_authors = 'publications_to_authors';
     var $publications_to_keywords = 'publications_to_keywords';
@@ -42,13 +42,13 @@ class ElibraryDB
 
     function getAllAuthors($limit = 0)
     {
-        $query = "SELECT {$this->authors}.id, fio, post, name FROM {$this->authors}, {$this->authors_to_organsations}, {$this->organisations} WHERE {$this->authors}.id={$this->authors_to_organsations}.authorid AND {$this->authors_to_organsations}.orgsid={$this->organisations}.id ";
+        $query = "SELECT {$this->authors}.id, fio, post, name FROM {$this->authors}, {$this->authors_to_organisations}, {$this->organisations} WHERE {$this->authors}.id={$this->authors_to_organisations}.authorid AND {$this->authors_to_organisations}.orgsid={$this->organisations}.id ";
 
         if (!empty($limit)) {
             $query .= ' LIMIT ?i';
         }
 
-        return $this->db->getAll($query, $this->authors, $limit);
+        return $this->db->getAll($query, $limit);
     }
 
 
@@ -62,14 +62,14 @@ class ElibraryDB
     {
         $info = $this->getRow($this->organisations, $id);
 
-        return $info['country'] . '.' . $info['city'] . '.' . $info['id'];
+        return md5($info['country']) . '.' . md5($info['city']) . '.' . $info['id'];
     }
 
     function generateAuthorGraphId($id)
     {
         $info = $this->getRow($this->authors, $id);
 
-        return $info['country'] . '.' . $info['city'] . '.' . $info['id'];
+        return md5($info['country']) . '.' . md5($info['city']) . '.' . $info['id'];
     }
 
     function getAllOrganisationsIds()
