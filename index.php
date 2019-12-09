@@ -26,10 +26,10 @@ if (!empty($_GET['b'])) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Elibrary Graph</title>
 
-    <link rel="stylesheet" href="/assets/lib/bootstrap4/bootstrap.min.css">
-    <link rel="stylesheet" href="/assets/lib/jquery-nice-select-1.1.0/css/nice-select.css">
+    <link rel="stylesheet" href="assets/lib/bootstrap4/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/lib/jquery-nice-select-1.1.0/css/nice-select.css">
 
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 <style>
@@ -54,8 +54,8 @@ if (!empty($_GET['b'])) {
 </div>
 
 
-<script defer src="/assets/lib/jquery/jquery-3.3.1.min.js"></script>
-<script defer src="/assets/lib/bootstrap4/bootstrap.bundle.min.js"></script>
+<script defer src="assets/lib/jquery/jquery-3.3.1.min.js"></script>
+<script defer src="assets/lib/bootstrap4/bootstrap.bundle.min.js"></script>
 <script defer src="assets/lib/d3/d3.v4.js"></script>
 
 <script defer src="assets/lib/jquery-nice-select-1.1.0/js/jquery.nice-select.min.js"></script>
