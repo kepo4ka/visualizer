@@ -84,7 +84,7 @@ class GraphData
         return $graph_organisations;
     }
 
-
+    // нерабочее
     function AuthorsRelByPublications($group = false, $limit = 0)
     {
         $graph_items = [];
@@ -99,16 +99,17 @@ class GraphData
             $new_item['name'] = $current_item['name'];
 
             if ($group) {
-                $new_item['id'] =  $new_item['name'] . '.' . $new_item['post'] . '.' . $new_item['id'];
+                $new_item['id'] =  md5($new_item['name']) . '.' . md5($new_item['post']) . '.' . $new_item['id'];
             }
 
-            $rel_organisations = $this->elibDb->getAuthorRelByPublications($current_item['id']);
+            $rel_authors = $this->elibDb->getAuthorRelByPublications($current_item['id']);
 
             $new_item['references'] = [];
 
-            foreach ($rel_organisations as $rel_organisation) {
+
+            foreach ($rel_authors as $rel_organisation) {
                 if ($group) {
-                    $rel_organisation['id'] =  $rel_organisation['name'] . '.' . $rel_organisation['post'] . '.' . $rel_organisation['id'];
+                    $rel_organisation['id'] =  md5($rel_organisation['name']) . '.' . md5($rel_organisation['post']) . '.' . $rel_organisation['id'];
                 }
                 $new_item['references'][] = $rel_organisation;
             }
