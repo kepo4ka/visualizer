@@ -117,10 +117,10 @@ class ElibraryDB
         return $authors_ids;
     }
 
-    function getAuthorRublics($id)
+    function getAuthorRubrics($id)
     {
-        $query = 'SELECT DISTINCT `publications`.`rubric` FROM `publications_to_authors`, `publications` WHERE publications_to_authors.publicationid=publications.id AND publications_to_authors.authorid=?s';
-        $authors_ids = $this->db->getCol($query, $id);
+        $query = 'SELECT rubric, count(rubric) as rCount FROM `publications_to_authors`, `publications` WHERE publications_to_authors.publicationid=publications.id and publications.rubric<>" " AND publications_to_authors.authorid=?s group by rubric order by rCount desc';
+        $authors_ids = $this->db->getAll($query, $id);
         return $authors_ids;
     }
 
@@ -139,20 +139,18 @@ class ElibraryDB
     }
 
 
-    function updateRublics()
+    function updateRubrics()
     {
         $query = 'SELECT id, `rubric` FROM `publications`';
 
         $publications = $this->db->getAll($query);
 
         foreach ($publications as $publication) {
-            $publication['rubric'] = str_replace(' ', '_', $publication['rubric']);
-
+            $publication['rubric_md5'] = splitMd5($publication['rubric']);
             save($publication, 'publications');
         }
 
         return count($publications);
-
     }
 
 
