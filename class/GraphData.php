@@ -84,42 +84,51 @@ class GraphData
         return $graph_organisations;
     }
 
-    // нерабочее
+
     function AuthorsRelByPublications($group = false, $limit = 0)
     {
+        global $db;
+        $limit = (int)$limit;
+
         $graph_items = [];
-        $items_db = $this->elibDb->getAllAuthors(50);
+//        $items_db = $this->elibDb->getAllAuthors(300);
+
+        $limit = 50;
+
+        $query = 'select authors.id, authors.post, authors.fio from authors, authors_to_organisations WHERE authors_to_organisations.orgsid=?s AND authors_to_organisations.authorid=authors.id';
+        if (!empty($limit)) {
+            $query .= " LIMIT $limit";
+        }
+
+        $items_db = $db->getAll($query, 5051);
 
 
         foreach ($items_db as $current_item) {
+
             $new_item = [];
             $new_item['id'] = $current_item['id'];
             $new_item['fio'] = $current_item['fio'];
             $new_item['post'] = $current_item['post'];
-            $new_item['name'] = $current_item['name'];
+            $new_item['title'] = $current_item['fio'];
 
-            $new_item['rubrics'] = $this->elibDb->getAuthorRublics($new_item['id']);
-
-            $graph_items[] = $new_item;
-            continue;
-
-
-
-            if ($group) {
-                $new_item['id'] = shortMd5($new_item['name']) . '.' . shortMd5($new_item['post']) . '.' . $new_item['id'];
+            $temp_rubrics = $this->elibDb->getAuthorRubrics($new_item['id']);
+            if (empty($temp_rubrics)) {
+                continue;
             }
 
-            $rel_authors = $this->elibDb->getAuthorRelByPublications($current_item['id']);
+            $new_item['rubric'] = $temp_rubrics[0]['rubric'];
+            $new_item['rubric_md5'] = splitMd5($new_item['rubric']);
+            $new_item['id'] = $new_item['rubric_md5'] . $new_item['id'];
 
-            $new_item['references'] = [];
 
+            $q = 'select distinct publications_to_authors.authorid FROM authors_to_organisations, publications, publications_to_authors WHERE authors_to_organisations.authorid=publications_to_authors.authorid AND authors_to_organisations.orgsid=?s AND publications.id=publications_to_authors.publicationid AND publications.rubric=?s';
 
-            foreach ($rel_authors as $rel_organisation) {
-                if ($group) {
-                    $rel_organisation['id'] = shortMd5($rel_organisation['name']) . '.' . shortMd5($rel_organisation['post']) . '.' . $rel_organisation['id'];
-                }
-                $new_item['references'][] = $rel_organisation;
+            $rel_authors = $db->getCol($q, 5051, $new_item['rubric']);
+
+            foreach ($rel_authors as $key => $rel_author) {
+                $rel_authors[$key] = $new_item['rubric_md5'] . $rel_authors[$key];
             }
+            $new_item['references'] = $rel_authors;
 
             $graph_items[] = $new_item;
         }
