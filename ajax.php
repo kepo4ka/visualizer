@@ -36,9 +36,11 @@ switch ($type) {
     case 'AuthorsRelByPublications':
         $info = $graph_data->AuthorsRelByPublications(true, $length);
         break;
-
-
-
+    case 'PublicationsRelByPopolarRubris':
+        $info = $graph_data->PublicationsRelByPopolarRubris(true, $length);
+//      $elib = new ElibraryDB();
+//        $info = $elib->updateRublics();
+        break;
 }
 
 echo json_encode($info, JSON_UNESCAPED_UNICODE);

@@ -591,3 +591,20 @@ function makeDir($path)
     return is_dir($path) || mkdir($path);
 }
 
+function shortMd5($text)
+{
+    return substr(md5($text), 0, 6);
+}
+
+function splitMd5($text, $delimiter = '.')
+{
+    $split_array = explode($delimiter, $text);
+    $result = '';
+
+    foreach ($split_array as $item) {
+        $result .= shortMd5($item) . '.';
+    }
+
+
+    return $result;
+}

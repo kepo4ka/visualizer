@@ -88,7 +88,7 @@ class GraphData
     function AuthorsRelByPublications($group = false, $limit = 0)
     {
         $graph_items = [];
-        $items_db = $this->elibDb->getAllAuthors($limit);
+        $items_db = $this->elibDb->getAllAuthors(50);
 
 
         foreach ($items_db as $current_item) {
@@ -98,8 +98,15 @@ class GraphData
             $new_item['post'] = $current_item['post'];
             $new_item['name'] = $current_item['name'];
 
+            $new_item['rubrics'] = $this->elibDb->getAuthorRublics($new_item['id']);
+
+            $graph_items[] = $new_item;
+            continue;
+
+
+
             if ($group) {
-                $new_item['id'] =  md5($new_item['name']) . '.' . md5($new_item['post']) . '.' . $new_item['id'];
+                $new_item['id'] = shortMd5($new_item['name']) . '.' . shortMd5($new_item['post']) . '.' . $new_item['id'];
             }
 
             $rel_authors = $this->elibDb->getAuthorRelByPublications($current_item['id']);
@@ -109,7 +116,7 @@ class GraphData
 
             foreach ($rel_authors as $rel_organisation) {
                 if ($group) {
-                    $rel_organisation['id'] =  md5($rel_organisation['name']) . '.' . md5($rel_organisation['post']) . '.' . $rel_organisation['id'];
+                    $rel_organisation['id'] = shortMd5($rel_organisation['name']) . '.' . shortMd5($rel_organisation['post']) . '.' . $rel_organisation['id'];
                 }
                 $new_item['references'][] = $rel_organisation;
             }
@@ -121,6 +128,47 @@ class GraphData
     }
 
 
+    function PublicationsRelByPopolarRubris($group = false, $limit = 0)
+    {
+        $graph_items = [];
+        $items_db = $this->elibDb->getAll('publications', 1000);
+
+
+        foreach ($items_db as $current_item) {
+
+            $new_item = [];
+            $new_item['id'] = $current_item['id'];
+            $new_item['title'] = $current_item['title'];
+            $new_item['rubric'] = $current_item['rubric'];
+
+            if (empty($new_item['rubric'])) {
+                continue;
+            }
+
+//            $new_item['rublic'] = $this->elibDb->getAuthorMostPopularRublic($new_item['id']);
+
+
+            if ($group) {
+                $new_item['id'] = splitMd5($new_item['rubric']) . $new_item['id'];
+            }
+
+
+            $rel_publications = $this->elibDb->getPublicationRelByRubrics($new_item['rubric']);
+
+            $new_item['references'] = [];
+
+
+            foreach ($rel_publications as $rel_item) {
+                if ($group) {
+                    $rel_organisation['id'] = splitMd5($rel_item['rubric']) . $rel_item['id'];
+                }
+                $new_item['references'][] = $rel_organisation['id'];
+            }
+
+            $graph_items[] = $new_item;
+        }
+        return $graph_items;
+    }
 }
 
 

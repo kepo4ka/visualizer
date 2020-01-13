@@ -62,14 +62,15 @@ class ElibraryDB
     {
         $info = $this->getRow($this->organisations, $id);
 
-        return md5($info['country']) . '.' . md5($info['city']) . '.' . $info['id'];
+        return shortMd5($info['country']) . '.' . shortMd5($info['city']) . '.' . $info['id'];
     }
+
 
     function generateAuthorGraphId($id)
     {
         $info = $this->getRow($this->authors, $id);
 
-        return md5($info['country']) . '.' . md5($info['city']) . '.' . $info['id'];
+        return shortMd5($info['country']) . '.' . shortMd5($info['city']) . '.' . $info['id'];
     }
 
     function getAllOrganisationsIds()
@@ -114,6 +115,57 @@ class ElibraryDB
         $authors_ids = $this->db->getCol($query, $id);
 
         return $authors_ids;
+    }
+
+    function getAuthorRublics($id)
+    {
+        $query = 'SELECT DISTINCT `publications`.`rubric` FROM `publications_to_authors`, `publications` WHERE publications_to_authors.publicationid=publications.id AND publications_to_authors.authorid=?s';
+        $authors_ids = $this->db->getCol($query, $id);
+        return $authors_ids;
+    }
+
+    function getAuthorMostPopularRublic($id)
+    {
+        $query = 'SELECT `publications`.`rubric` FROM `publications_to_authors`, `publications` WHERE publications_to_authors.publicationid=publications.id AND publications_to_authors.authorid=?s GROUP BY rubric';
+        $authors_ids = $this->db->getAll($query, $id);
+        return $authors_ids;
+    }
+
+    function getPublicationRelByRubrics($rubric)
+    {
+        $query = 'SELECT DISTINCT id, title, rubric FROM `publications` WHERE publications.rubric=?s';
+        $authors_ids = $this->db->getAll($query, $rubric);
+        return $authors_ids;
+    }
+
+
+    function updateRublics()
+    {
+        $query = 'SELECT id, `rubric` FROM `publications`';
+
+        $publications = $this->db->getAll($query);
+
+        foreach ($publications as $publication) {
+            $publication['rubric'] = str_replace(' ', '_', $publication['rubric']);
+
+            save($publication, 'publications');
+        }
+
+        return count($publications);
+
+    }
+
+
+    function getAll($table, $limit = 0)
+    {
+        $query = 'select * from ?n';
+        $limit = (int)$limit;
+
+        if (!empty($limit)) {
+            $query .= ' LIMIT ' . $limit;
+        }
+
+        return $this->db->getAll($query, $table);
     }
 }
 
