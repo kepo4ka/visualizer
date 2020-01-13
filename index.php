@@ -35,7 +35,7 @@ if (!empty($_GET['b'])) {
 <style>
 
     .node {
-        font: 10px sans -serif;
+        font: 150px sans -serif;
     }
 
     .link {
