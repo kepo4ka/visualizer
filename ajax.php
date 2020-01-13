@@ -34,7 +34,20 @@ switch ($type) {
         break;
 
     case 'AuthorsRelByPublications':
-        $info = $graph_data->AuthorsRelByPublications(true, $length);
+
+        $info = $graph_data->elibDb->updateRubrics();
+
+//        $info = $graph_data->AuthorsRelByPublications(true, $length);
+
+
+//        $key = "head:getCategories:$length";
+//        $info = $graph_data->AuthorsRelByPublications(true, $length);
+//
+//        if (empty($info)) {
+//            $info = $graph_data->AuthorsRelByPublications(true, $length);
+//            redisSet($key, $info);
+//        }
+
         break;
     case 'PublicationsRelByPopolarRubris':
         $info = $graph_data->PublicationsRelByPopolarRubris(true, $length);
