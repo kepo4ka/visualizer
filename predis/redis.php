@@ -44,7 +44,7 @@ function redisGet($key, $diff_time = 120)
         return false;
     }
 
-    $value = json_decode($value, true);
+    $value = json_decode(gzuncompress($value), true);
 
     return $value;
 }
@@ -56,7 +56,7 @@ function redisSet($key, $value)
         return false;
     }
     $redis->hset($key, 'time', time());
-    $res = $redis->hset($key, 'value', json_encode($value, JSON_UNESCAPED_UNICODE));
+    $res = $redis->hset($key, 'value', gzcompress(json_encode($value, JSON_UNESCAPED_UNICODE)));
     return $res;
 }
 

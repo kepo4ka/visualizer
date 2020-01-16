@@ -608,3 +608,10 @@ function splitMd5($text, $delimiter = '.')
 
     return $result;
 }
+
+
+function getTime($start)
+{
+    echo 'Время выполнения скрипта: ' . round(microtime(true) - $start, 4) . ' сек.';
+    exit;
+}

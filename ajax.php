@@ -35,18 +35,25 @@ switch ($type) {
 
     case 'AuthorsRelByPublications':
 
-        $info = $graph_data->elibDb->updateRubrics();
-
-//        $info = $graph_data->AuthorsRelByPublications(true, $length);
+//        $info = $graph_data->elibDb->updateRubrics();
 
 
-//        $key = "head:getCategories:$length";
-//        $info = $graph_data->AuthorsRelByPublications(true, $length);
-//
-//        if (empty($info)) {
-//            $info = $graph_data->AuthorsRelByPublications(true, $length);
-//            redisSet($key, $info);
-//        }
+        $length = 'all';
+
+        $start = microtime(true);
+
+        $key = "AuthorsRelByPublications:$length";
+        $info = redisGet($key);
+
+        if (empty($info)) {
+            echo 'work SLOW...\n';
+            
+            $info = $graph_data->AuthorsRelByPublications(true, $length);
+            redisSet($key, $info);
+        }
+
+        getTime($start);
+
 
         break;
     case 'PublicationsRelByPopolarRubris':
