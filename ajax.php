@@ -47,12 +47,13 @@ switch ($type) {
 
         if (empty($info)) {
             echo 'work SLOW...\n';
-            
+
             $info = $graph_data->AuthorsRelByPublications(true, $length);
             redisSet($key, $info);
+            exit;
         }
 
-        getTime($start);
+        //getTime($start);
 
 
         break;
