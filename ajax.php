@@ -38,7 +38,7 @@ switch ($type) {
 //        $info = $graph_data->elibDb->updateRubrics();
 
 
-        $length = 'all';
+        $length = '5';
 
         $start = microtime(true);
 
@@ -46,11 +46,11 @@ switch ($type) {
         $info = redisGet($key);
 
         if (empty($info)) {
-            echo 'work SLOW...\n';
+//            echo 'work SLOW...\n';
 
             $info = $graph_data->AuthorsRelByPublications(true, $length);
             redisSet($key, $info);
-            exit;
+
         }
 
         //getTime($start);
