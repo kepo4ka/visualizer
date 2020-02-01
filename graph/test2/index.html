@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
+    body, html {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+    }
+
+    svg {
+        width: 100%;
+        height: 100%;
+        background: white;
+    }
 
     .node {
         font: 300 11px "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -47,6 +58,10 @@
     }
 
 </style>
+
+<svg></svg>
+
+
 <body>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/d3-selection-multi.v0.4.min.js"></script>
@@ -61,33 +76,56 @@
         .size([360, innerRadius]);
 
     const line = d3.radialLine()
-        .radius(function(d) { return d.y; })
-        .angle(function(d) { return d.x / 180 * Math.PI; })
+        .radius(function (d) {
+            return d.y;
+        })
+        .angle(function (d) {
+            return d.x / 180 * Math.PI;
+        })
         .curve(d3.curveBundle.beta(0.95));
 
-    var svg = d3.select("body").append("svg")
-        .attr("width", diameter)
-        .attr("height", diameter)
-        .append("g")
-        .attr("transform", "translate(" + radius + "," + radius + ")");
+    var svg = d3.select("svg");
+
+    width = svg.node().getBoundingClientRect().width / 2;
+
+    height = svg.node().getBoundingClientRect().height / 2;
 
 
-    var zoomable_layer = svg.append('g');
+    var link = svg.append("g").selectAll(".link"),
+        node = svg.append("g").selectAll(".node");
 
-    zoom = d3.zoom().scaleExtent([-Infinity, Infinity]).on('zoom', function() {
+
+    var zoomable_layer = svg.selectAll('g');
+
+
+    vis = zoomable_layer.attrs({
+        transform: "translate(" + width + "," + height + ")"
+    });
+
+    zoom = d3.zoom().scaleExtent([-Infinity, Infinity]).on('zoom', function () {
+        scale = d3.event.transform.k;
+        x = d3.event.transform.x !== 0 ? d3.event.transform.x + width : width;
+        y = d3.event.transform.x !== 0 ? d3.event.transform.y + height : height;
+
+        // x /=scale;
+        // y /=scale;
+
+        console.log(d3.event.transform);
+        console.log(x, y);
+
+
+        console.log('abs', x, y);
+        console.log('-------');
 
         return zoomable_layer.attrs({
-            transform: d3.event.transform
+            transform: "scale(" + scale + ") translate(" + width + "," + height + ")"
         });
     });
 
     svg.call(zoom);
 
 
-    var link = svg.append("g").selectAll(".link"),
-        node = svg.append("g").selectAll(".node");
-
-    d3.json("flare.json", function(error, classes) {
+    d3.json("flare.json", function (error, classes) {
         if (error) throw error;
 
         var root = d3.hierarchy(packageHierarchy(classes), (d) => d.children);
@@ -108,30 +146,52 @@
             .attr('d', d => line(d.source.path(d.target)));
 
         node = node
-            .data(nodes.filter(function(n) { return !n.children; }))
+            .data(nodes.filter(function (n) {
+                return !n.children;
+            }))
             .enter().append("text")
             .attr("class", "node")
             .attr("dy", ".31em")
-            .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + (d.y + 8) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); })
-            .style("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
-            .text(function(d) { return d.data.key; })
+            .attr("transform", function (d) {
+                return "rotate(" + (d.x - 90) + ")translate(" + (d.y + 8) + ",0)" + (d.x < 180 ? "" : "rotate(180)");
+            })
+            .style("text-anchor", function (d) {
+                return d.x < 180 ? "start" : "end";
+            })
+            .text(function (d) {
+                return d.data.key;
+            })
             .on("mouseover", mouseovered)
             .on("mouseout", mouseouted);
     });
 
     function mouseovered(d) {
         node
-            .each(function(n) { n.target = n.source = false; });
+            .each(function (n) {
+                n.target = n.source = false;
+            });
 
         link
-            .classed("link--target", function(l) { if (l.target === d) return l.source.source = true; })
-            .classed("link--source", function(l) { if (l.source === d) return l.target.target = true; })
-            .filter(function(l) { return l.target === d || l.source === d; })
-            .each(function() { this.parentNode.appendChild(this); });
+            .classed("link--target", function (l) {
+                if (l.target === d) return l.source.source = true;
+            })
+            .classed("link--source", function (l) {
+                if (l.source === d) return l.target.target = true;
+            })
+            .filter(function (l) {
+                return l.target === d || l.source === d;
+            })
+            .each(function () {
+                this.parentNode.appendChild(this);
+            });
 
         node
-            .classed("node--target", function(n) { return n.target; })
-            .classed("node--source", function(n) { return n.source; });
+            .classed("node--target", function (n) {
+                return n.target;
+            })
+            .classed("node--source", function (n) {
+                return n.source;
+            });
     }
 
     function mouseouted(d) {
@@ -164,7 +224,7 @@
             return node;
         }
 
-        classes.forEach(function(d) {
+        classes.forEach(function (d) {
             find(d.name, d);
         });
 
@@ -177,13 +237,13 @@
             imports = [];
 
         // Compute a map from name to node.
-        nodes.forEach(function(d) {
+        nodes.forEach(function (d) {
             map[d.data.name] = d;
         });
 
         // For each import, construct a link from the source to target node.
-        nodes.forEach(function(d) {
-            if (d.data.imports) d.data.imports.forEach(function(i) {
+        nodes.forEach(function (d) {
+            if (d.data.imports) d.data.imports.forEach(function (i) {
                 imports.push({source: map[d.data.name], target: map[i]});
             });
         });
