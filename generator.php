@@ -28,7 +28,7 @@ $info = test($tree);
 
 function generateStringTree($tree)
 {
-    $
+    
 }
 
 function test($tree, $deep = 5)
