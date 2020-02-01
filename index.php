@@ -47,7 +47,7 @@ if (!empty($_GET['b'])) {
 
 
 </style>
-<div class="container">
+<div class="container-fluid p-3">
     <svg width="1980" height="1080">
 
     </svg>
@@ -57,6 +57,7 @@ if (!empty($_GET['b'])) {
 <script defer src="assets/lib/jquery/jquery-3.3.1.min.js"></script>
 <script defer src="assets/lib/bootstrap4/bootstrap.bundle.min.js"></script>
 <script defer src="assets/lib/d3/d3.v4.js"></script>
+<script src="https://d3js.org/d3-selection-multi.v0.4.min.js"></script>
 
 <script defer src="assets/lib/jquery-nice-select-1.1.0/js/jquery.nice-select.min.js"></script>
 

@@ -34,13 +34,15 @@ let line = d3.radialLine()
 let g = svg.append("g");
 
 
+
+
 svg.append("rect")
     .attr("fill", "none")
     .attr("pointer-events", "all")
     .attr("width", width)
     .attr("height", height)
     .call(d3.zoom()
-        .scaleExtent([0.0001, 100])
+        .scaleExtent([0, Infinity])
         .on("zoom", zoom));
 
 
