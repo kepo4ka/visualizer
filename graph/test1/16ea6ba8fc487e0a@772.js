@@ -2,13 +2,24 @@
 export default function define(runtime, observer) {
     const main = runtime.module();
     const fileAttachments = new Map([["flare.json", new URL("./files/9b6806e3dd9c4c2c26760ba784437138c78b43a9a8e58a0bbafe5833026e3265637c9c7810224d66b79ba907b4d0be731c1a81ad043e10376aec3c18a49f3d84",
-    import.meta.url)]]);
+    import
+.
+    meta.url
+)]])
+    ;
 
     main.builtin("FileAttachment", runtime.fileAttachments(name => fileAttachments.get(name)));
 
     main.variable(observer("chart")).define("chart", ["tree", "bilink", "d3", "data", "width", "id", "path", "k", "color"], function (tree, bilink, d3, data, width, id, path, k, color) {
-            const root = tree(bilink(d3.hierarchy(data)
-                .sort((a, b) => d3.ascending(a.height, b.height) || d3.ascending(a.data.name, b.data.name))));
+
+        const hh = d3.hierarchy(data)
+            .sort((a, b) => d3.ascending(a.height, b.height) || d3.ascending(a.data.name, b.data.name));
+
+        const bb = bilink(hh);
+
+
+        const root = tree(bb);
+
 
             const svg = d3.create("svg")
                 .attr("viewBox", [-width / 2, -width / 2, width, width]);
@@ -101,7 +112,8 @@ ${d.incoming.length} incoming`));
     main.variable(observer("id")).define("id", function () {
         return (
             function id(node) {
-                return `${node.parent ? id(node.parent) + "." : ""}${node.data.name}`;
+                let idd = `${node.parent ? id(node.parent) + "." : ""}${node.data.name}`;
+                return idd;
             }
         )
     });
