@@ -10,7 +10,7 @@
     svg {
         width: 100%;
         height: 100%;
-        background: white;
+
     }
 
     .node {
@@ -57,6 +57,14 @@
         stroke: #2ca02c;
     }
 
+    .container {
+        background: #1d94ff;
+        margin: 10px;
+        width: 100%;
+        height: 500px;
+
+    }
+
 </style>
 
 <svg></svg>
@@ -75,6 +83,7 @@
     var cluster = d3.cluster()
         .size([360, innerRadius]);
 
+
     const line = d3.radialLine()
         .radius(function (d) {
             return d.y;
@@ -90,39 +99,96 @@
 
     height = svg.node().getBoundingClientRect().height / 2;
 
-
-    var link = svg.append("g").selectAll(".link"),
-        node = svg.append("g").selectAll(".node");
-
-
-    var zoomable_layer = svg.selectAll('g');
+    let zoomable_layer = svg.append('g');
+    let graph_layer = zoomable_layer.append('g');
 
 
-    vis = zoomable_layer.attrs({
-        transform: "translate(" + width + "," + height + ")"
-    });
+
+    var link = graph_layer.append("g").selectAll(".link"),
+        node = graph_layer.append("g").selectAll(".node");
+
+
+    let viewbox = [-width / 2, -height, 1000, 1000];
+    let k = 1;
+    let x, y;
+
+
+    // vis = zoomable_layer.attr(
+    //     'viewBox', viewbox.join(',')
+    // );
+
+    // let zoom = d3.zoom().scaleExtent([-Infinity, Infinity]).on('zoom', function () {
+    //     let scale = d3.event.transform.k;
+    //
+    //
+    //     k = scale;
+    //     let x = d3.event.transform.x;
+    //     let y = d3.event.transform.y;
+    //
+    //     let viewboxStr = zoomable_layer.attr('viewBox');
+    //     let viewboxParams = viewboxStr.split(',');
+    //
+    //     viewboxParams[0] = parseFloat(viewboxParams[0]) - x;
+    //     viewboxParams[1] = parseFloat(viewboxParams[1]) - y;
+    //     // viewboxParams[2] = parseFloat(viewboxParams[2]) / scale;
+    //     // viewboxParams[3] = parseFloat(viewboxParams[3]) / scale;
+    //
+    //
+    //     console.log(d3.event.transform, viewboxParams);
+    //
+    //     zoomable_layer.attr(
+    //         'viewBox', viewboxParams.join(',')
+    //     );
+    // });
+    // svg.call(zoom);
+
+    // zoomable_layer = svg.selectAll('g');
+
+    // document.getElementById('zoom_plus').onclick = function () {
+    //     k *= 1.1;
+    //     Zoom(false, false, k);
+    // };
+    // document.getElementById('zoom_minus').onclick = function () {
+    //     k /= 1.1;
+    //
+    //     Zoom(false, false, k);
+    // };
+
+    graph_layer.attr(
+        'transform', "translate(" + width + "," + height + ")"
+    );
+
+
+    // Zoom(width, height, 1);
 
     zoom = d3.zoom().scaleExtent([-Infinity, Infinity]).on('zoom', function () {
-        scale = d3.event.transform.k;
-        x = d3.event.transform.x !== 0 ? d3.event.transform.x + width : width;
-        y = d3.event.transform.x !== 0 ? d3.event.transform.y + height : height;
+        let scale = d3.event.transform.k;
+        let x = d3.event.transform.x;
+        let y = d3.event.transform.y;
 
-        // x /=scale;
-        // y /=scale;
+        // k *= scale;
 
-        console.log(d3.event.transform);
-        console.log(x, y);
-
-
-        console.log('abs', x, y);
-        console.log('-------');
-
-        return zoomable_layer.attrs({
-            transform: "scale(" + scale + ") translate(" + width + "," + height + ")"
-        });
+        Zoom(x, y, scale);
     });
 
     svg.call(zoom);
+
+
+    function Zoom(px, py, pk) {
+        if (px !== false) {
+            x = px;
+        }
+        if (py !== false) {
+            y = py;
+        }
+        if (pk !== false) {
+            k = pk;
+        }
+
+        return zoomable_layer.attr(
+            'transform', "translate(" + x + "," + y + ") scale(" + k + ")"
+        );
+    }
 
 
     d3.json("flare.json", function (error, classes) {
