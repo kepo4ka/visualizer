@@ -12,17 +12,21 @@ export default function define(runtime, observer) {
 
     main.variable(observer("chart")).define("chart", ["tree", "bilink", "d3", "data", "width", "id", "path", "k", "color"], function (tree, bilink, d3, data, width, id, path, k, color) {
 
-        const hh = d3.hierarchy(data)
-            .sort((a, b) => d3.ascending(a.height, b.height) || d3.ascending(a.data.name, b.data.name));
+            const hh = d3.hierarchy(data)
+                .sort((a, b) => d3.ascending(a.height, b.height) || d3.ascending(a.data.name, b.data.name));
 
-        const bb = bilink(hh);
+            const bb = bilink(hh);
 
 
-        const root = tree(bb);
+            const root = tree(bb);
+
+            const w2 = width/2;
 
 
             const svg = d3.create("svg")
-                .attr("viewBox", [-width / 2, -width / 2, width, width]);
+                .attr("viewBox", [-w2, -w2, width, width])
+                .attr('width', width)
+                .attr('height', w2);
 
             const node = svg.append("g")
                 .attr("font-family", "sans-serif")
@@ -41,6 +45,7 @@ export default function define(runtime, observer) {
 ${d.outgoing.length} outgoing
 ${d.incoming.length} incoming`));
 
+
             svg.append("g")
                 .attr("fill", "none")
                 .selectAll("path")
@@ -51,6 +56,51 @@ ${d.incoming.length} incoming`));
                 .style("mix-blend-mode", "darken")
                 .attr("stroke", (d, i) => color(d3.easeQuad(i / ((1 << k) - 1))))
                 .attr("d", d => d.join(""));
+
+
+            let zoomable_layer = svg;
+
+
+            // let vis = svg.attr(
+            //     'transform', "translate(" + 100 + "," + 100 + ")"
+            // );
+            //
+            let zoom = d3.zoom().scaleExtent([-Infinity, Infinity]).on('zoom', function () {
+
+                let scale = d3.event.transform.k;
+                let x = d3.event.transform.x;
+                let y = d3.event.transform.y;
+
+                // x /=scale;
+                // y /=scale;
+
+                console.log(d3.event.transform);
+                console.log(x, y);
+
+
+                console.log('abs', x, y);
+                console.log('-------');
+
+                let viewboxStr = zoomable_layer.attr('viewBox');
+
+                let viewboxParams = viewboxStr.split(',');
+
+                viewboxParams[0] = - x - w2;
+                viewboxParams[1] = -y - w2;
+
+                console.log(viewboxParams);
+
+                 zoomable_layer.attr(
+                    'viewBox', viewboxParams.join(','),
+                );
+
+                return zoomable_layer.attr(
+                    'transform', "scale(" + scale + ")"
+                );
+            });
+
+            svg.call(zoom);
+
 
             return svg.node();
         }
