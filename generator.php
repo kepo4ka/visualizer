@@ -24,65 +24,42 @@ $res = [];
 $res[] = $root;
 
 $k = 0;
-$info = test($tree);
+
+$deep = rand(2, 5);
+$info = test($tree, $deep);
+$info['deep'] = $deep;
 
 
-$temp = '';
-
-
-function test_print($item, $key)
+function test($tree, $deep)
 {
-    echoBr("$key holds $item\n");
-}
+    $length = rand(2, 7);
 
-array_walk_recursive($info, 'test_print');
-
-function implode_all($glue, $arr, $temp)
-{
-
-    for ($i = 0; $i < count($arr); $i++) {
-        $temp = '.' . $arr[$i]['name'];
-
-        if (!empty($arr[$i]['child'])) {
-
-            $temp .= implode_all($glue, $arr[$i]['child'], $temp);
-        }
-
-    }
-
-
-    return $temp;
-}
-
-function test($tree, $deep = 5)
-{
-    $length = rand(1, 3);
     $deep--;
     if ($deep < 1) {
-        return [];
+        return null;
     }
 
-//    if (empty($tree))
-//    {
-//        return getArray();
-//    }
 
-    for ($i = 0; $i < count($tree); $i++) {
-        for ($j = 0; $j < $length; $j++) {
-            if (count($tree) < $length) {
-                $temp = getArray();
-                $tree[$i]['child'][] = $temp;
-                $tree[$i]['child'] = test($tree[$i]['child'], $deep);
-            }
+    if (empty($tree)) {
+        for ($i = 0; $i < $length; $i++) {
+            $tree[] = getArray();
         }
     }
+
+
+    for ($i = 0; $i < count($tree); $i++) {
+        $tree[$i]['child'] = test($tree[$i]['child'], $deep);
+    }
+
     return $tree;
 }
 
 function getArray()
 {
-    $temp = ['name' => uniqid(),
-        'child' => []];
+    $temp = [
+        'name' => uniqid(),
+        'child' => []
+    ];
     return $temp;
 }
 
