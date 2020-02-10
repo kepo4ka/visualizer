@@ -14,7 +14,9 @@ $names = generateNames();
 $root = 'flare';
 $tree = [
     [
-        'name' => $root, 'child' => []
+        'full_path' => 'flare',
+        'name' => $root,
+        'child' => []
     ]
 ];
 
@@ -25,39 +27,75 @@ $res[] = $root;
 
 $k = 0;
 
-$deep = rand(2, 5);
-$info = test($tree, $deep);
-$info['deep'] = $deep;
+$deep = 5;
+$info = generateTree($tree, $deep);
 
 
-function test($tree, $deep)
+$list = [];
+generateList($info);
+$info = $list;
+
+function generateList($tree, $length = 1000)
 {
-    $length = rand(2, 7);
+    global $list;
+
+    if (count($list) >= $length) {
+        return false;
+    }
+
+    for ($i = 0; $i < count($tree); $i++) {
+        if (count($list) >= $length) {
+            return false;
+        }
+        if (empty($tree[$i]['child'])) {
+            $list[] = $tree[$i]['full_path'];
+        } else {
+            generateList($tree[$i]['child'], $length);
+        }
+    }
+}
+
+function generateTree($tree, $deep, $name = '')
+{
+    $length = rand(12, 15);
 
     $deep--;
     if ($deep < 1) {
+
         return null;
     }
 
 
     if (empty($tree)) {
         for ($i = 0; $i < $length; $i++) {
-            $tree[] = getArray();
+            $temp = getArray($deep);
+            $temp['full_path'] = $name . '.' . $temp['name'];
+            $tree[] = $temp;
         }
     }
 
 
     for ($i = 0; $i < count($tree); $i++) {
-        $tree[$i]['child'] = test($tree[$i]['child'], $deep);
+        if (!empty($name)) {
+            $parent = $name . '.' . $tree[$i]['name'];
+        } else {
+            $parent = $tree[$i]['name'];
+        }
+        $tree[$i]['child'] = generateTree($tree[$i]['child'], $deep, $parent);
     }
 
     return $tree;
 }
 
-function getArray()
+function getArray($deep)
 {
+    $res_name = uniqid();
+
+    $res_name = substr($res_name, $deep);
+
+
     $temp = [
-        'name' => uniqid(),
+        'name' => $res_name,
         'child' => []
     ];
     return $temp;
@@ -77,26 +115,6 @@ function getArray()
 //    }
 //    return $tree;
 //}
-
-
-function generateTree($parent, $deep = 3)
-{
-    global $names;
-    $length = rand(1, 5);
-
-    $childs = [];
-
-    for ($i = 0; $i < $length; $i++) {
-        $temp_name = $names[0];
-        $names = array_splice($names, 1);
-
-        $path = "$parent.$temp_name";
-        $childs[] = $path;
-    }
-
-
-    return $childs;
-}
 
 
 function generateNames($length = 1000)
