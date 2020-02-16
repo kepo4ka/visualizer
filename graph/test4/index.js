@@ -2,6 +2,8 @@
 (function () {
     var bubble_layer, h, height, line, pack, stratify, svg, vis, w, width, zoom, zoomable_layer;
 
+    const beta_value = 0.5;
+
     svg = d3.select('svg');
 
     width = svg.node().getBoundingClientRect().width;
@@ -14,7 +16,7 @@
         return zoomable_layer.attrs({
             transform: d3.event.transform
         });
-    });
+    })
 
     svg.call(zoom);
 
@@ -33,11 +35,15 @@
 
     pack = d3.pack().size([w, h]).padding(3);
 
-    line = d3.line().curve(d3.curveBundle.beta(0.95)).x(function (d) {
-        return d.x;
-    }).y(function (d) {
-        return d.y;
-    });
+    line = d3.line()
+        .curve(d3.curveBundle.beta(beta_value))
+
+        .x(function (d) {
+            return d.x;
+        })
+        .y(function (d) {
+            return d.y;
+        });
 
     let betaf = 50;
     let beta = betaf / 100;
@@ -46,8 +52,6 @@
     bubble_layer = vis.append('g').attrs({
         transform: "translate(" + (-w / 2) + "," + (-h / 2) + ")"
     });
-
-
 
 
     d3.csv('flare.csv', function (data) {
