@@ -8,6 +8,10 @@ export default function define(runtime, observer) {
 )]])
     ;
 
+    const beta_value = 1;
+
+
+
     main.builtin("FileAttachment", runtime.fileAttachments(name => fileAttachments.get(name)));
 
     main.variable(observer("chart")).define("chart", ["tree", "bilink", "d3", "data", "width", "id", "path", "k", "color"], function (tree, bilink, d3, data, width, id, path, k, color) {
@@ -17,20 +21,25 @@ export default function define(runtime, observer) {
 
             const bb = bilink(hh);
 
-
+            let scale = 0.11;
+            let x, y;
             const root = tree(bb);
 
-            const w2 = width/2;
+
+            const w2 = width / 2;
 
 
-            const svg = d3.create("svg")
-                .attr("viewBox", [-w2, -w2, width, width])
+            let svg = d3.create("svg")
+
                 .attr('width', width)
-                .attr('height', w2);
+                .attr('height', width);
 
-            const node = svg.append("g")
+            let layer0 = svg.append('g');
+            let zoomable_layer = layer0.append('g');
+
+            const node = zoomable_layer.append("g")
                 .attr("font-family", "sans-serif")
-                .attr("font-size", 10)
+                .attr("font-size", 20)
                 .selectAll("g")
                 .data(root.leaves())
                 .join("g")
@@ -46,7 +55,7 @@ ${d.outgoing.length} outgoing
 ${d.incoming.length} incoming`));
 
 
-            svg.append("g")
+        zoomable_layer.append("g")
                 .attr("fill", "none")
                 .selectAll("path")
                 .data(d3.transpose(root.leaves()
@@ -54,50 +63,42 @@ ${d.incoming.length} incoming`));
                     .map(path => Array.from(path.split(k)))))
                 .join("path")
                 .style("mix-blend-mode", "darken")
+                .style("stroke-width", "3px")
                 .attr("stroke", (d, i) => color(d3.easeQuad(i / ((1 << k) - 1))))
                 .attr("d", d => d.join(""));
 
 
-            let zoomable_layer = svg;
+            layer0.attr(
+                'transform', "translate(" + w2 + "," + w2 + ")"
+            );
 
 
-            // let vis = svg.attr(
-            //     'transform', "translate(" + 100 + "," + 100 + ")"
-            // );
-            //
             let zoom = d3.zoom().scaleExtent([-Infinity, Infinity]).on('zoom', function () {
-
                 let scale = d3.event.transform.k;
                 let x = d3.event.transform.x;
                 let y = d3.event.transform.y;
 
-                // x /=scale;
-                // y /=scale;
+                // k *= scale;
 
-                console.log(d3.event.transform);
-                console.log(x, y);
+                Zoom(x, y, scale);
+            });
 
 
-                console.log('abs', x, y);
-                console.log('-------');
-
-                let viewboxStr = zoomable_layer.attr('viewBox');
-
-                let viewboxParams = viewboxStr.split(',');
-
-                viewboxParams[0] = - x - w2;
-                viewboxParams[1] = -y - w2;
-
-                console.log(viewboxParams);
-
-                 zoomable_layer.attr(
-                    'viewBox', viewboxParams.join(','),
-                );
+            function Zoom(px, py, pk) {
+                if (px !== false) {
+                    x = px;
+                }
+                if (py !== false) {
+                    y = py;
+                }
+                if (pk !== false) {
+                    scale = pk;
+                }
 
                 return zoomable_layer.attr(
-                    'transform', "scale(" + scale + ")"
+                    'transform', "translate(" + x + "," + y + ") scale(" + scale + ")"
                 );
-            });
+            }
 
             svg.call(zoom);
 
@@ -282,7 +283,7 @@ ${d.incoming.length} incoming`));
     main.variable(observer("line")).define("line", ["d3"], function (d3) {
         return (
             d3.lineRadial()
-                .curve(d3.curveBundle)
+                .curve(d3.curveBundle.beta(beta_value))
                 .radius(d => d.y)
                 .angle(d => d.x)
         )
@@ -305,7 +306,7 @@ ${d.incoming.length} incoming`));
     });
     main.variable(observer("width")).define("width", function () {
         return (
-            954
+            window.screen.width
         )
     });
     main.variable(observer("radius")).define("radius", ["width"], function (width) {
