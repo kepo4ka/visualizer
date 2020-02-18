@@ -94,12 +94,14 @@ class GraphData
 //        $items_db = $this->elibDb->getAllAuthors(300);
 
 
+        // получить список авторов указанной организации
+        $org_id = 5051;
         $query = 'select authors.id, authors.post, authors.fio from authors, authors_to_organisations WHERE authors_to_organisations.orgsid=?s AND authors_to_organisations.authorid=authors.id';
         if (!empty($limit)) {
             $query .= " LIMIT $limit";
         }
+        $items_db = $db->getAll($query, $org_id);
 
-        $items_db = $db->getAll($query, 5051);
 
         foreach ($items_db as $current_item) {
 
@@ -121,15 +123,16 @@ class GraphData
             $new_item['id'] = $new_item['rubric_md5'] . $new_item['id'];
 
 
-            $q = 'select distinct publications_to_authors.authorid FROM publications, publications_to_authors WHERE  publications.id=publications_to_authors.publicationid AND publications.rubric=?s';
+            $q = 'select distinct publications_to_authors.authorid FROM publications, publications_to_authors WHERE publications_to_authors.authorid<>?s AND publications.id=publications_to_authors.publicationid AND publications.rubric=?s';
 
-            $rel_authors = $db->getCol($q, $new_item['rubric']);
+            $rel_authors = $db->getCol($q, $current_item['id'], $new_item['rubric']);
 
 
             foreach ($rel_authors as $key => $rel_author) {
                 $rel_authors[$key] = $new_item['rubric_md5'] . $rel_authors[$key];
+                $new_item['references'][] = $rel_authors[$key];
             }
-            $new_item['references'] = $rel_authors;
+
 
             $graph_items[] = $new_item;
         }
