@@ -83,6 +83,9 @@
     var cluster = d3.cluster()
         .size([360, innerRadius]);
 
+    let k = 1;
+    let x, y;
+    let beta_value = 0.1;
 
     const line = d3.radialLine()
         .radius(function (d) {
@@ -91,7 +94,7 @@
         .angle(function (d) {
             return d.x / 180 * Math.PI;
         })
-        .curve(d3.curveBundle.beta(0.95));
+        .curve(d3.curveBundle.beta(beta_value));
 
     var svg = d3.select("svg");
 
@@ -103,56 +106,9 @@
     let graph_layer = zoomable_layer.append('g');
 
 
-
     var link = graph_layer.append("g").selectAll(".link"),
         node = graph_layer.append("g").selectAll(".node");
 
-
-    let viewbox = [-width / 2, -height, 1000, 1000];
-    let k = 1;
-    let x, y;
-
-
-    // vis = zoomable_layer.attr(
-    //     'viewBox', viewbox.join(',')
-    // );
-
-    // let zoom = d3.zoom().scaleExtent([-Infinity, Infinity]).on('zoom', function () {
-    //     let scale = d3.event.transform.k;
-    //
-    //
-    //     k = scale;
-    //     let x = d3.event.transform.x;
-    //     let y = d3.event.transform.y;
-    //
-    //     let viewboxStr = zoomable_layer.attr('viewBox');
-    //     let viewboxParams = viewboxStr.split(',');
-    //
-    //     viewboxParams[0] = parseFloat(viewboxParams[0]) - x;
-    //     viewboxParams[1] = parseFloat(viewboxParams[1]) - y;
-    //     // viewboxParams[2] = parseFloat(viewboxParams[2]) / scale;
-    //     // viewboxParams[3] = parseFloat(viewboxParams[3]) / scale;
-    //
-    //
-    //     console.log(d3.event.transform, viewboxParams);
-    //
-    //     zoomable_layer.attr(
-    //         'viewBox', viewboxParams.join(',')
-    //     );
-    // });
-    // svg.call(zoom);
-
-    // zoomable_layer = svg.selectAll('g');
-
-    // document.getElementById('zoom_plus').onclick = function () {
-    //     k *= 1.1;
-    //     Zoom(false, false, k);
-    // };
-    // document.getElementById('zoom_minus').onclick = function () {
-    //     k /= 1.1;
-    //
-    //     Zoom(false, false, k);
-    // };
 
     graph_layer.attr(
         'transform', "translate(" + width + "," + height + ")"
@@ -191,7 +147,7 @@
     }
 
 
-    d3.json("flare.json", function (error, classes) {
+    d3.json("/ajax.php", function (error, classes) {
         if (error) throw error;
 
         var root = d3.hierarchy(packageHierarchy(classes), (d) => d.children);
@@ -225,7 +181,7 @@
                 return d.x < 180 ? "start" : "end";
             })
             .text(function (d) {
-                return d.data.key;
+                return d.data.title;
             })
             .on("mouseover", mouseovered)
             .on("mouseout", mouseouted);

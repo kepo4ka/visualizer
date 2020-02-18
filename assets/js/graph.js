@@ -1,10 +1,10 @@
-// const primary_field = 'id';
-// const references_field = 'references';
-// const title_field = 'title';
+const primary_field = 'id';
+const references_field = 'references';
+const title_field = 'title';
 
-const primary_field = 'name';
-const references_field = 'imports';
-const title_field = 'name';
+// const primary_field = 'name';
+// const references_field = 'imports';
+// const title_field = 'name';
 
 let url = '/ajax.php?';
 
@@ -59,7 +59,7 @@ let link = g.selectAll(".link"),
 let length = randomInteger(50, 500);
 
 let data_url = "ajax.php?l=" + length;
-data_url = 'data_examples/flare.json';
+// data_url = 'data_examples/flare.json';
 
 d3.json(data_url, function (error, classes) {
     if (error) throw error;
