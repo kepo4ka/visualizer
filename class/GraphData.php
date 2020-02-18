@@ -111,6 +111,7 @@ class GraphData
         $query = 'select authors.id, authors.post, authors.fio from authors, authors_to_organisations WHERE authors_to_organisations.orgsid=?s AND authors_to_organisations.authorid=authors.id';
         if (!empty($limit)) {
             $query .= " LIMIT $limit";
+
         }
         $items_db = $db->getAll($query, $org_id);
 
@@ -124,7 +125,7 @@ class GraphData
             $new_item['title'] = $current_item['fio'];
 
 
-            $temp_rubrics = $this->elibDb->getAuthorRubrics($new_item['id']);
+            $temp_rubrics = $this->elibDb->getAuthorRubrics($current_item['id']);
 
             if (empty($temp_rubrics)) {
                 continue;
@@ -142,7 +143,7 @@ class GraphData
 
             foreach ($rel_authors as $key => $rel_author) {
                 $rel_authors[$key] = $new_item['rubric_md5'] . $rel_authors[$key];
-                $new_item['name'][] = $rel_authors[$key];
+                $new_item['imports'][] = $rel_authors[$key];
             }
 
 

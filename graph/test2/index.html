@@ -146,8 +146,10 @@
         );
     }
 
+    let url = 'flare.json';
+    url = '/ajax.php';
 
-    d3.json("/ajax.php", function (error, classes) {
+    d3.json(url, function (error, classes) {
         if (error) throw error;
 
         var root = d3.hierarchy(packageHierarchy(classes), (d) => d.children);

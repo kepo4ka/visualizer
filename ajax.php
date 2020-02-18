@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/init.php';
 
-$length = 15;
+$length = 150;
 
 if (!empty($_GET['l'])) {
     $length = (int)$_GET['l'];
@@ -23,8 +23,8 @@ if (empty($type)) {
 
 $graph_data = new GraphData();
 $info = [];
-$primary_field = 'id';
-$references_field = 'references';
+$primary_field = 'name';
+$references_field = 'imports';
 
 
 switch ($type) {
@@ -67,7 +67,7 @@ switch ($type) {
 
 
 
-$info = clearEmptyReferences($info, $primary_field, $references_field);
+$info = $graph_data->clearEmptyReferences($info, $primary_field, $references_field);
 
 echo json_encode($info, JSON_UNESCAPED_UNICODE);
 exit;
