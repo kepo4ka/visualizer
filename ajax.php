@@ -43,7 +43,9 @@ switch ($type) {
         $start = microtime(true);
 
         $key = "AuthorsRelByPublications:$length";
-//        $info = redisGet($key);
+
+
+        $info = redisGet($key);
 
         if (empty($info)) {
 //            echo 'work SLOW...\n';

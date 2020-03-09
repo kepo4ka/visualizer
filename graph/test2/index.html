@@ -43,6 +43,10 @@
         fill: #d62728;
     }
 
+    .node--source.node--target {
+        fill: blueviolet;
+    }
+
     .link--source,
     .link--target {
         stroke-opacity: 1;
@@ -55,6 +59,11 @@
 
     .link--target {
         stroke: #2ca02c;
+    }
+
+    .link--2 {
+        stroke: purple !important;
+        stroke-width: 3px !important;
     }
 
     .container {
@@ -76,6 +85,9 @@
 
 <script>
 
+    let url = 'flare.json';
+    // url = '/ajax.php';
+
     var diameter = 960,
         radius = diameter / 2,
         innerRadius = radius - 120;
@@ -85,7 +97,7 @@
 
     let k = 1;
     let x, y;
-    let beta_value = 0.1;
+    let beta_value = 0.99;
 
     const line = d3.radialLine()
         .radius(function (d) {
@@ -130,25 +142,6 @@
     svg.call(zoom);
 
 
-    function Zoom(px, py, pk) {
-        if (px !== false) {
-            x = px;
-        }
-        if (py !== false) {
-            y = py;
-        }
-        if (pk !== false) {
-            k = pk;
-        }
-
-        return zoomable_layer.attr(
-            'transform', "translate(" + x + "," + y + ") scale(" + k + ")"
-        );
-    }
-
-    let url = 'flare.json';
-    url = '/ajax.php';
-
     d3.json(url, function (error, classes) {
         if (error) throw error;
 
@@ -156,7 +149,6 @@
 
         var links = packageImports(root.descendants());
 
-        console.dir(links);
 
         cluster(root);
 
@@ -166,7 +158,7 @@
             .data(links)
             .enter().append('path')
             .attr('class', 'link')
-            //.merge(edges)
+            // .merge(edges)
             .attr('d', d => line(d.source.path(d.target)));
 
         node = node
@@ -183,24 +175,46 @@
                 return d.x < 180 ? "start" : "end";
             })
             .text(function (d) {
-                return d.data.title;
+                return d.data.name;
             })
             .on("mouseover", mouseovered)
             .on("mouseout", mouseouted);
     });
 
+
+    function Zoom(px, py, pk) {
+        if (px !== false) {
+            x = px;
+        }
+        if (py !== false) {
+            y = py;
+        }
+        if (pk !== false) {
+            k = pk;
+        }
+
+        return zoomable_layer.attr(
+            'transform', "translate(" + x + "," + y + ") scale(" + k + ")"
+        );
+    }
+
     function mouseovered(d) {
+
         node
             .each(function (n) {
-                n.target = n.source = false;
+                n.have_target = n.have_source = false;
             });
 
         link
             .classed("link--target", function (l) {
-                if (l.target === d) return l.source.source = true;
+                if (l.target === d) {
+                    return l.source.have_source = true;
+                }
             })
             .classed("link--source", function (l) {
-                if (l.source === d) return l.target.target = true;
+                if (l.source === d) {
+                    return l.target.have_target = true;
+                }
             })
             .filter(function (l) {
                 return l.target === d || l.source === d;
@@ -209,17 +223,17 @@
                 this.parentNode.appendChild(this);
             });
 
+
         node
             .classed("node--target", function (n) {
-                return n.target;
+                return n.have_target;
             })
             .classed("node--source", function (n) {
-                return n.source;
+                return n.have_source;
             });
     }
 
     function mouseouted(d) {
-        console.log("moouseout");
         link
             .classed("link--target", false)
             .classed("link--source", false);
@@ -229,7 +243,7 @@
             .classed("node--source", false);
     }
 
-    d3.select(self.frameElement).style("height", diameter + "px");
+    // d3.select(self.frameElement).style("height", diameter + "px");
 
     // Lazily construct the package hierarchy from class names.
     function packageHierarchy(classes) {
@@ -267,9 +281,11 @@
 
         // For each import, construct a link from the source to target node.
         nodes.forEach(function (d) {
-            if (d.data.imports) d.data.imports.forEach(function (i) {
-                imports.push({source: map[d.data.name], target: map[i]});
-            });
+            if (d.data.imports) {
+                d.data.imports.forEach(function (i) {
+                    imports.push({source: map[d.data.name], target: map[i]});
+                });
+            }
         });
 
         return imports;

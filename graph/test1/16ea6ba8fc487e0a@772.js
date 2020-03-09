@@ -22,7 +22,7 @@ export default function define(runtime, observer) {
     main.variable(observer("chart")).define("chart", ["tree", "bilink", "d3", "data", "width", "id", "path", "k", "color"], function (tree, bilink, d3, data, width, id, path, k, color) {
 
             const hh = d3.hierarchy(data)
-                .sort((a, b) => d3.ascending(a.height, b.height) || d3.ascending(a.data.name, b.data.name));
+
 
             const bb = bilink(hh);
 
