@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/init.php';
 
-$length = 150;
+$length = 20;
 
 if (!empty($_GET['l'])) {
     $length = (int)$_GET['l'];
