@@ -80,215 +80,231 @@
 
 
 <body>
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="https://d3js.org/d3-selection-multi.v0.4.min.js"></script>
+<script src="../d3.v4.js"></script>
+<script src="../d3-selection-multi.v0.4.js"></script>
 
 <script>
-
     let url = 'flare.json';
     // url = '/ajax.php';
 
-    var diameter = 960,
-        radius = diameter / 2,
-        innerRadius = radius - 120;
-
-    var cluster = d3.cluster()
-        .size([360, innerRadius]);
-
     let k = 1;
     let x, y;
-    let beta_value = 0.99;
+    let beta_value = 0.59;
+    let diameter = 960;
+    let radius = diameter / 2;
+    let innerRadius = radius - 120;
 
-    const line = d3.radialLine()
-        .radius(function (d) {
-            return d.y;
-        })
-        .angle(function (d) {
-            return d.x / 180 * Math.PI;
-        })
-        .curve(d3.curveBundle.beta(beta_value));
+    let cluster = d3.cluster()
+        .size([360, innerRadius]);
 
-    var svg = d3.select("svg");
+    f(beta_value);
 
-    width = svg.node().getBoundingClientRect().width / 2;
-
-    height = svg.node().getBoundingClientRect().height / 2;
-
-    let zoomable_layer = svg.append('g');
-    let graph_layer = zoomable_layer.append('g');
+    document.body.addEventListener("click", clickBody);
 
 
-    var link = graph_layer.append("g").selectAll(".link"),
-        node = graph_layer.append("g").selectAll(".node");
+    function clickBody() {
+        beta_value = 0.5;
+        f(beta_value);
+    }
+
+    function f(beta_value) {
 
 
-    graph_layer.attr(
-        'transform', "translate(" + width + "," + height + ")"
-    );
-
-
-    // Zoom(width, height, 1);
-
-    zoom = d3.zoom().scaleExtent([-Infinity, Infinity]).on('zoom', function () {
-        let scale = d3.event.transform.k;
-        let x = d3.event.transform.x;
-        let y = d3.event.transform.y;
-
-        // k *= scale;
-
-        Zoom(x, y, scale);
-    });
-
-    svg.call(zoom);
-
-
-    d3.json(url, function (error, classes) {
-        if (error) throw error;
-
-        var root = d3.hierarchy(packageHierarchy(classes), (d) => d.children);
-
-        var links = packageImports(root.descendants());
-
-
-        cluster(root);
-
-        var nodes = root.descendants();
-
-        link = link
-            .data(links)
-            .enter().append('path')
-            .attr('class', 'link')
-            // .merge(edges)
-            .attr('d', d => line(d.source.path(d.target)));
-
-        node = node
-            .data(nodes.filter(function (n) {
-                return !n.children;
-            }))
-            .enter().append("text")
-            .attr("class", "node")
-            .attr("dy", ".31em")
-            .attr("transform", function (d) {
-                return "rotate(" + (d.x - 90) + ")translate(" + (d.y + 8) + ",0)" + (d.x < 180 ? "" : "rotate(180)");
+        let line = d3.radialLine()
+            .radius(function (d) {
+                return d.y;
             })
-            .style("text-anchor", function (d) {
-                return d.x < 180 ? "start" : "end";
+            .angle(function (d) {
+                return d.x / 180 * Math.PI;
             })
-            .text(function (d) {
-                return d.data.name;
-            })
-            .on("mouseover", mouseovered)
-            .on("mouseout", mouseouted);
-    });
+            .curve(d3.curveBundle.beta(beta_value));
+
+        var svg = d3.select("svg");
+
+        svg.selectAll("*").remove();
+
+        width = svg.node().getBoundingClientRect().width / 2;
+
+        height = svg.node().getBoundingClientRect().height / 2;
+
+        let zoomable_layer = svg.append('g');
+        let graph_layer = zoomable_layer.append('g');
 
 
-    function Zoom(px, py, pk) {
-        if (px !== false) {
-            x = px;
-        }
-        if (py !== false) {
-            y = py;
-        }
-        if (pk !== false) {
-            k = pk;
-        }
+        var link = graph_layer.append("g").selectAll(".link"),
+            node = graph_layer.append("g").selectAll(".node");
 
-        return zoomable_layer.attr(
-            'transform', "translate(" + x + "," + y + ") scale(" + k + ")"
+
+        graph_layer.attr(
+            'transform', "translate(" + width + "," + height + ")"
         );
-    }
-
-    function mouseovered(d) {
-
-        node
-            .each(function (n) {
-                n.have_target = n.have_source = false;
-            });
-
-        link
-            .classed("link--target", function (l) {
-                if (l.target === d) {
-                    return l.source.have_source = true;
-                }
-            })
-            .classed("link--source", function (l) {
-                if (l.source === d) {
-                    return l.target.have_target = true;
-                }
-            })
-            .filter(function (l) {
-                return l.target === d || l.source === d;
-            })
-            .each(function () {
-                this.parentNode.appendChild(this);
-            });
 
 
-        node
-            .classed("node--target", function (n) {
-                return n.have_target;
-            })
-            .classed("node--source", function (n) {
-                return n.have_source;
-            });
-    }
+        // Zoom(width, height, 1);
 
-    function mouseouted(d) {
-        link
-            .classed("link--target", false)
-            .classed("link--source", false);
+        zoom = d3.zoom().scaleExtent([-Infinity, Infinity]).on('zoom', function () {
+            let scale = d3.event.transform.k;
+            let x = d3.event.transform.x;
+            let y = d3.event.transform.y;
 
-        node
-            .classed("node--target", false)
-            .classed("node--source", false);
-    }
+            // k *= scale;
 
-    // d3.select(self.frameElement).style("height", diameter + "px");
+            Zoom(x, y, scale);
+        });
 
-    // Lazily construct the package hierarchy from class names.
-    function packageHierarchy(classes) {
-        var map = {};
+        svg.call(zoom);
 
-        function find(name, data) {
-            var node = map[name], i;
-            if (!node) {
-                node = map[name] = data || {name: name, children: []};
-                if (name.length) {
-                    node.parent = find(name.substring(0, i = name.lastIndexOf(".")));
-                    node.parent.children.push(node);
-                    node.key = name.substring(i + 1);
-                }
+
+        d3.json(url, function (error, classes) {
+
+            if (error) {
+                throw error;
             }
-            return node;
+
+            var root = d3.hierarchy(packageHierarchy(classes), (d) => d.children);
+            cluster(root);
+
+            var nodes = root.descendants();
+
+            var links = packageImports(nodes);
+
+
+            link = link
+                .data(links)
+                .enter().append('path')
+                .attr('class', 'link')
+                // .merge(edges)
+                .attr('d', d => line(d.source.path(d.target)));
+
+            node = node
+                .data(nodes.filter(function (n) {
+                    return !n.children;
+                }))
+                .enter().append("text")
+                .attr("class", "node")
+                .attr("dy", ".31em")
+                .attr("transform", function (d) {
+                    return "rotate(" + (d.x - 90) + ")translate(" + (d.y + 8) + ",0)" + (d.x < 180 ? "" : "rotate(180)");
+                })
+                .style("text-anchor", function (d) {
+                    return d.x < 180 ? "start" : "end";
+                })
+                .text(function (d) {
+                    return d.data.name;
+                })
+                .on("mouseover", mouseovered)
+                .on("mouseout", mouseouted);
+        });
+
+
+        function Zoom(px, py, pk) {
+            if (px !== false) {
+                x = px;
+            }
+            if (py !== false) {
+                y = py;
+            }
+            if (pk !== false) {
+                k = pk;
+            }
+
+            return zoomable_layer.attr(
+                'transform', "translate(" + x + "," + y + ") scale(" + k + ")"
+            );
         }
 
-        classes.forEach(function (d) {
-            find(d.name, d);
-        });
+        function mouseovered(d) {
 
-        return map[""];
-    }
-
-    // Return a list of imports for the given array of nodes.
-    function packageImports(nodes) {
-        var map = {},
-            imports = [];
-
-        // Compute a map from name to node.
-        nodes.forEach(function (d) {
-            map[d.data.name] = d;
-        });
-
-        // For each import, construct a link from the source to target node.
-        nodes.forEach(function (d) {
-            if (d.data.imports) {
-                d.data.imports.forEach(function (i) {
-                    imports.push({source: map[d.data.name], target: map[i]});
+            node
+                .each(function (n) {
+                    n.have_target = n.have_source = false;
                 });
-            }
-        });
 
-        return imports;
+            link
+                .classed("link--target", function (l) {
+                    if (l.target === d) {
+                        return l.source.have_source = true;
+                    }
+                })
+                .classed("link--source", function (l) {
+                    if (l.source === d) {
+                        return l.target.have_target = true;
+                    }
+                })
+                .filter(function (l) {
+                    return l.target === d || l.source === d;
+                })
+                .each(function () {
+                    this.parentNode.appendChild(this);
+                });
+
+
+            node
+                .classed("node--target", function (n) {
+                    return n.have_target;
+                })
+                .classed("node--source", function (n) {
+                    return n.have_source;
+                });
+        }
+
+        function mouseouted(d) {
+            link
+                .classed("link--target", false)
+                .classed("link--source", false);
+
+            node
+                .classed("node--target", false)
+                .classed("node--source", false);
+        }
+
+        // d3.select(self.frameElement).style("height", diameter + "px");
+
+        // Lazily construct the package hierarchy from class names.
+        function packageHierarchy(classes) {
+            var map = {};
+
+            function find(name, data) {
+                var node = map[name], i;
+                if (!node) {
+                    node = map[name] = data || {name: name, children: []};
+                    if (name.length) {
+                        node.parent = find(name.substring(0, i = name.lastIndexOf(".")));
+                        node.parent.children.push(node);
+                        node.key = name.substring(i + 1);
+                    }
+                }
+                return node;
+            }
+
+            classes.forEach(function (d) {
+                find(d.name, d);
+            });
+
+            return map[""];
+        }
+
+        // Return a list of imports for the given array of nodes.
+        function packageImports(nodes) {
+            var map = {},
+                imports = [];
+
+            // Compute a map from name to node.
+            nodes.forEach(function (d) {
+                map[d.data.name] = d;
+            });
+
+            // For each import, construct a link from the source to target node.
+            nodes.forEach(function (d) {
+                if (d.data.imports) {
+                    d.data.imports.forEach(function (i) {
+                        imports.push({source: map[d.data.name], target: map[i]});
+                    });
+                }
+            });
+
+            return imports;
+        }
     }
 
 </script>

@@ -16,7 +16,7 @@
         return zoomable_layer.attrs({
             transform: d3.event.transform
         });
-    })
+    });
 
     svg.call(zoom);
 
@@ -55,8 +55,13 @@
 
 
     d3.csv('flare.csv', function (data) {
+
         return d3.csv('flare_links.csv', function (links_data) {
             var bubbles, enb, index, links, root;
+
+            a = stratify(data);
+
+
             root = stratify(data).sum(function (d) {
                 return d.value;
             }).sort(function (a, b) {
@@ -65,16 +70,20 @@
             pack(root);
             index = {};
             root.eachBefore(function (d) {
-                return index[d.data.id] = d;
+                index[d.data.id] = d;
+                return index[d.data.id];
             });
+
             links_data.forEach(function (d) {
                 d.source = index[d.source];
                 d.target = index[d.target];
-                return d.path = d.source.path(d.target);
+                d.path = d.source.path(d.target);
+                return d.path;
             });
-            console.log(links_data);
+
 
             bubbles = bubble_layer.selectAll('.bubble').data(root.descendants());
+
             enb = bubbles.enter().append('circle').attrs({
                 "class": 'bubble',
                 cx: function (d) {
