@@ -98,11 +98,11 @@ $(document).ready(function () {
                     data = cl;
                     graphBuild1();
                     break;
+
                 case 'stratify':
                     if (!checkOneRoot(cl)) {
                         cl = addOneRoot(cl);
                     }
-
                     data = convertJsonData(cl);
                     links_data = convertJsonDataLinks(cl);
                     graphBuild2();
@@ -595,7 +595,7 @@ $(document).ready(function () {
             d.path = d.source.path(d.target);
             return d.path;
         });
-
+        links = bubble_layer.selectAll('.link').data(links_data);
 
         bubbles = bubble_layer.selectAll('.bubble').data(root.descendants());
 
@@ -610,22 +610,58 @@ $(document).ready(function () {
             r: function (d) {
                 return d.r;
             }
-        });
+        }).on("mouseover", mouseovered)
+            .on("mouseout", mouseouted);
+
+
+        function mouseovered(d) {
+            // showNodeRelations(d.data);
+
+            enb
+                .each(function (n) {
+                    n.have_target = n.have_source = false;
+                });
+
+            console.log(links)
+
+            links
+                .classed("link--target", function (l) {
+
+                    if (l.target === d) {
+                        return l.source.have_source = true;
+                    }
+                })
+                .classed("link--source", function (l) {
+                    if (l.source === d) {
+                        return l.target.have_target = true;
+                    }
+                })
+                .filter(function (l) {
+                    return l.target === d || l.source === d;
+                })
+                .each(function () {
+                    this.parentNode.appendChild(this);
+                });
+
+
+            enb
+                .classed("node--target", function (n) {
+                    return n.have_target;
+                })
+                .classed("node--source", function (n) {
+                    return n.have_source;
+                });
+        }
+
+        function mouseouted(d)
+        {
+
+        }
+
         enb.append('title').text(function (d) {
             return d.data.title || d.id.substring(d.id.lastIndexOf(".") + 1).split(/(?=[A-Z][^A-Z])/g).join(' ');
         });
-        links = bubble_layer.selectAll('.link').data(links_data);
 
-        svg.on('click', function (d) {
-            betaf += 10;
-            beta = betaf / 100;
-            links.each(function (d1) {
-                d1.classed("link--target", false)
-                    .classed("link--source", true)
-            })
-
-            // bubble_layer.selectAll('.link').enter().curve(d3.curveBundle.beta(beta));
-        });
 
 
         return links.enter().append('path').attrs({
