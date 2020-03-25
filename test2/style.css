@@ -96,7 +96,7 @@ body, html {
 .node_relations_outcoming {
     background: rgba(232, 85, 68, 0.69);
     bottom: 0;
-    left: 0;
+    right: 0;
 }
 
 .color_block {
@@ -113,6 +113,13 @@ body, html {
 .bubble:hover {
     stroke: black;
     vector-effect: non-scaling-stroke;
+}
+
+.bubble.node--target {
+    fill: red;
+}
+.bubble.node--source {
+    fill: red;
 }
 
 /*.link {*/
