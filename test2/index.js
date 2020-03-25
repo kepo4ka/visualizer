@@ -474,7 +474,7 @@ $(document).ready(function () {
                 if (j == split_names.length - 1) {
 
                     if (json[i].size == undefined) {
-                        json[i].size = json[i].imports.length ;
+                        json[i].size = json[i].imports.length;
                     }
                     value = json[i].size + '';
 
@@ -595,7 +595,10 @@ $(document).ready(function () {
             d.path = d.source.path(d.target);
             return d.path;
         });
-        links = bubble_layer.selectAll('.link').data(links_data);
+        links = bubble_layer.selectAll('.link').data(links_data).enter()
+            .append('path')
+            .attr('class', 'link')
+            .attr('d', d => line(d.source.path(d.target)));
 
         bubbles = bubble_layer.selectAll('.bubble').data(root.descendants());
 
@@ -621,8 +624,6 @@ $(document).ready(function () {
                 .each(function (n) {
                     n.have_target = n.have_source = false;
                 });
-
-            console.log(links)
 
             links
                 .classed("link--target", function (l) {
@@ -653,15 +654,21 @@ $(document).ready(function () {
                 });
         }
 
-        function mouseouted(d)
-        {
+        function mouseouted(d) {
 
+
+            links
+                .classed("link--target", false)
+                .classed("link--source", false);
+
+            enb
+                .classed("node--target", false)
+                .classed("node--source", false);
         }
 
         enb.append('title').text(function (d) {
             return d.data.title || d.id.substring(d.id.lastIndexOf(".") + 1).split(/(?=[A-Z][^A-Z])/g).join(' ');
         });
-
 
 
         return links.enter().append('path').attrs({
