@@ -9,121 +9,76 @@
 
     <link rel="stylesheet" href="../assets/lib/bootstrap4/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/lib/jquery-nice-select-1.1.0/css/nice-select.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+
+    <link rel="stylesheet" href="helper.css">
+    <link rel="stylesheet" href="style.css">
     <style>
-        body, html {
-            padding: 0;
-            margin: 0;
-            height: 100%;
-        }
-
-        #graph_svg {
-            width: 100%;
-            height: 100%;
-
-        }
-
-        #slider-simple {
-            max-height: 87px;
-        }
-
-        .node {
-            font: 300 11px "Helvetica Neue", Helvetica, Arial, sans-serif;
-            fill: #bbb;
-        }
-
-        .node:hover {
-            fill: #000;
-        }
-
-        .link {
-            stroke: steelblue;
-            stroke-opacity: .4;
-            fill: none;
-            pointer-events: none;
-        }
-
-        .node:hover,
-        .node--source,
-        .node--target {
-            font-weight: 700;
-        }
-
-        .node--source {
-            fill: #2ca02c;
-        }
-
-        .node--target {
-            fill: #d62728;
-        }
-
-        .node--source.node--target {
-            fill: blueviolet;
-        }
-
-        .link--source,
-        .link--target {
-            stroke-opacity: 1;
-            stroke-width: 2px;
-        }
-
-        .link--source {
-            stroke: #d62728;
-        }
-
-        .link--target {
-            stroke: #2ca02c;
-        }
-
-        .link--2 {
-            stroke: purple !important;
-            stroke-width: 3px !important;
-        }
-
-        .container {
-            background: #1d94ff;
-            margin: 10px;
-            width: 100%;
-            height: 500px;
-
-        }
-
-        .svg_info_container {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.35);
-            padding: 1rem;
-        }
-
-        .color_block {
-            width: 1rem;
-            height: 1rem;
-
-        }
-
-        .flex_centered {
-            display: flex;
-            align-items: center;
-        }
-
-        .bg-purple {
-            background-color: purple;
-        }
-
 
     </style>
 </head>
 <body>
 
+<div class="full_preloader">
+</div>
 
 <div class="container-fluid h-100">
+
+
     <div class="row h-100 ">
         <div class="col-2 bg-secondary p-0">
             <h1 class="border-bottom p-0 m-0 text-center text-white pb-1">
                 Визуализация
             </h1>
 
-            <div class="d-flex align-items-center flex-column bg-white m-2">
+            <div class="d-flex align-items-center flex-column bg-white mx-2 my-4 p-2 rounded">
+                <label class="text-center m-0 font-weight-light">
+                    Вид графа
+                </label>
+
+                <div class="flex_centered m-2 w-100 px-4">
+                    <select class="nice-select w-100" name="current_graph">
+                        <option value="1">Круговой</option>
+                        <option value="2">Пузырьчатый</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center flex-column bg-white mx-2 my-4 p-2 rounded">
+                <label class="text-center m-0 font-weight-light">
+                    Источник данных
+                </label>
+
+                <div class="flex_centered m-2 w-100 px-4">
+                    <select class="nice-select w-100" name="data_source" id="data_source_handler">
+                        <option value="flare">
+                            Зависимости библиотеки
+                        </option>
+                        <option value="generator" disabled>
+                            Случайные данные
+                        </option>
+                        <option value="elibrary">
+                            Цитирование (elibrary.ru)
+                        </option>
+                    </select>
+                </div>
+
+
+                <div class="flex_centered flex-column" id="node_count_container">
+                    <label class="text-center m-0 font-weight-light">
+                        Количество вершин
+                    </label>
+
+                    <div class="flex_centered m-2 w-100 px-4">
+
+                        <input id="node_count_input" type="number" class="form-control" placeholder="0" min="5"
+                               max="1000">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="d-flex align-items-center flex-column bg-white mx-2 my-4 p-2 rounded">
 
                 <label class="text-center m-0 font-weight-light">
                     Степень жгутирования = <span id="value-simple" class="font-weight-bold">1</span>
@@ -131,41 +86,60 @@
                 <div class="col-12 m-0">
                     <div id="slider-simple"></div>
                 </div>
+            </div>
+        </div>
 
 
+        <div class="col-10 h-100 position-relative">
+
+            <div class="transition-loader">
+                <div class="transition-loader-inner">
+                    <label></label>
+                    <label></label>
+                    <label></label>
+                    <label></label>
+                    <label></label>
+                    <label></label>
+                </div>
             </div>
 
-        </div>
-        <div class="col-10 h-100 position-relative">
             <svg id="graph_svg"></svg>
+
+
             <div class="svg_info_container">
-                <div class="flex_centered">
+                <div class="svg_info__item">
                     <div class="color_block bg-dark"></div>
                     <div class="mx-1"> -</div>
                     <div class=""> Текущая вершина</div>
                 </div>
-                <div class="flex_centered">
+                <div class="svg_info__item">
                     <div class="color_block bg-primary"></div>
                     <div class="mx-1"> -</div>
                     <div class=""> Связь</div>
                 </div>
-                <div class="flex_centered">
+                <div class="svg_info__item">
                     <div class="color_block bg-success"></div>
                     <div class="mx-1"> -</div>
                     <div class=""> Входящие связи</div>
                 </div>
-                <div class="flex_centered">
+                <div class="svg_info__item">
                     <div class="color_block bg-danger"></div>
                     <div class="mx-1"> -</div>
                     <div class=""> Исходящие связи</div>
                 </div>
 
-                <div class="flex_centered">
+                <div class="svg_info__item">
                     <div class="color_block bg-purple"></div>
                     <div class="mx-1"> -</div>
                     <div class=""> Взаимные связи</div>
                 </div>
+            </div>
 
+
+            <div class="node_relations_outcoming node_relations">
+            </div>
+
+            <div class="node_relations_incoming node_relations">
             </div>
         </div>
 
@@ -181,265 +155,10 @@
 <script src="../assets/lib/d3/d3-selection-multi.v0.4.js"></script>
 <script src="../assets/lib/d3/d3-simple-slider.min.js"></script>
 
+<script src="index.js"></script>
+
 <script>
 
-
-    let url = 'flare.json';
-    // url = '/ajax.php';
-    let data = {};
-
-    let k = 1;
-    let x, y;
-    let beta_value = parseFloat(localStorage.getItem('beta_value') || 0);
-    let diameter = 960;
-    let radius = diameter / 2;
-    let innerRadius = radius - 120;
-    let data_loaded = false;
-
-    let cluster = d3.cluster()
-        .size([360, innerRadius]);
-
-
-    menuSetup();
-
-    d3.json(url, function (er, cl) {
-        data = cl;
-        data_loaded = true;
-        graphBuild(beta_value);
-    });
-
-    function menuSetup() {
-        BetaSlider();
-
-        $('.nice-select').niceSelect();
-    }
-
-
-    function BetaSlider() {
-        let sliderSimple = d3
-            .sliderBottom()
-            .min(0)
-            .max(1)
-            .width(200)
-            .ticks(10)
-            .default(beta_value)
-            .on('onchange', val => {
-                d3.select('#value-simple').text(d3.format('.2')(val));
-                beta_value = val;
-                localStorage.setItem('beta_value', beta_value);
-                graphBuild(beta_value);
-            });
-
-        let gSimple = d3
-            .select('#slider-simple')
-            .append('svg')
-            .append('g')
-            .attr('transform', 'translate(50,30)');
-
-
-        gSimple.call(sliderSimple);
-
-        d3.select('#value-simple').text(sliderSimple.value());
-    }
-
-
-    function graphBuild(beta_value) {
-
-        if (!data_loaded) {
-            return false;
-        }
-
-        let line = d3.radialLine()
-            .radius(function (d) {
-                return d.y;
-            })
-            .angle(function (d) {
-                return d.x / 180 * Math.PI;
-            })
-            .curve(d3.curveBundle.beta(beta_value));
-
-        let svg = d3.select("#graph_svg");
-
-        svg.select("#first_g").remove();
-
-        width = svg.node().getBoundingClientRect().width / 2;
-
-        height = svg.node().getBoundingClientRect().height / 2;
-
-        let zoomable_layer = svg.append('g')
-            .attr('id', 'first_g');
-        let graph_layer = zoomable_layer.append('g');
-
-
-        let link = graph_layer.append("g").selectAll(".link"),
-            node = graph_layer.append("g").selectAll(".node");
-
-
-        graph_layer.attr(
-            'transform', "translate(" + width + "," + height + ")"
-        );
-
-
-        Zoom(x, y, k);
-
-        zoom = d3.zoom().scaleExtent([-Infinity, Infinity]).on('zoom', function () {
-            let scale = d3.event.transform.k;
-            let x = d3.event.transform.x;
-            let y = d3.event.transform.y;
-
-            // k *= scale;
-
-            Zoom(x, y, scale);
-        });
-
-        svg.call(zoom);
-
-
-        let root = d3.hierarchy(packageHierarchy(data), (d) => d.children);
-        cluster(root);
-
-        let nodes = root.descendants();
-
-        let links = packageImports(nodes);
-
-
-        link = link
-            .data(links)
-            .enter().append('path')
-            .attr('class', 'link')
-            // .merge(edges)
-            .attr('d', d => line(d.source.path(d.target)));
-
-        node = node
-            .data(nodes.filter(function (n) {
-                return !n.children;
-            }))
-            .enter().append("text")
-            .attr("class", "node")
-            .attr("dy", ".31em")
-            .attr("transform", function (d) {
-                return "rotate(" + (d.x - 90) + ")translate(" + (d.y + 8) + ",0)" + (d.x < 180 ? "" : "rotate(180)");
-            })
-            .style("text-anchor", function (d) {
-                return d.x < 180 ? "start" : "end";
-            })
-            .text(function (d) {
-                return d.data.name;
-            })
-            .on("mouseover", mouseovered)
-            .on("mouseout", mouseouted);
-
-
-        /**
-         * @return {boolean}
-         */
-        function Zoom(px, py, pk) {
-            if (!px || !py || !pk) {
-                return false;
-            }
-
-            x = px;
-            y = py;
-            k = pk;
-
-            return zoomable_layer.attr(
-                'transform', "translate(" + x + "," + y + ") scale(" + k + ")"
-            );
-        }
-
-        function mouseovered(d) {
-
-            node
-                .each(function (n) {
-                    n.have_target = n.have_source = false;
-                });
-
-            link
-                .classed("link--target", function (l) {
-                    if (l.target === d) {
-                        return l.source.have_source = true;
-                    }
-                })
-                .classed("link--source", function (l) {
-                    if (l.source === d) {
-                        return l.target.have_target = true;
-                    }
-                })
-                .filter(function (l) {
-                    return l.target === d || l.source === d;
-                })
-                .each(function () {
-                    this.parentNode.appendChild(this);
-                });
-
-
-            node
-                .classed("node--target", function (n) {
-                    return n.have_target;
-                })
-                .classed("node--source", function (n) {
-                    return n.have_source;
-                });
-        }
-
-        function mouseouted(d) {
-            link
-                .classed("link--target", false)
-                .classed("link--source", false);
-
-            node
-                .classed("node--target", false)
-                .classed("node--source", false);
-        }
-
-        // d3.select(self.frameElement).style("height", diameter + "px");
-
-        // Lazily construct the package hierarchy from class names.
-        function packageHierarchy(classes) {
-            let map = {};
-
-            function find(name, data) {
-                let node = map[name], i;
-                if (!node) {
-                    node = map[name] = data || {name: name, children: []};
-                    if (name.length) {
-                        node.parent = find(name.substring(0, i = name.lastIndexOf(".")));
-                        node.parent.children.push(node);
-                        node.key = name.substring(i + 1);
-                    }
-                }
-                return node;
-            }
-
-            classes.forEach(function (d) {
-                find(d.name, d);
-            });
-
-            return map[""];
-        }
-
-        // Return a list of imports for the given array of nodes.
-        function packageImports(nodes) {
-            let map = {},
-                imports = [];
-
-            // Compute a map from name to node.
-            nodes.forEach(function (d) {
-                map[d.data.name] = d;
-            });
-
-            // For each import, construct a link from the source to target node.
-            nodes.forEach(function (d) {
-                if (d.data.imports) {
-                    d.data.imports.forEach(function (i) {
-                        imports.push({source: map[d.data.name], target: map[i]});
-                    });
-                }
-            });
-
-            return imports;
-        }
-    }
 
 </script>
 </body>
