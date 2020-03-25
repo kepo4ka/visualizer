@@ -4,7 +4,7 @@ export default function define(runtime, observer) {
 
     let url = './files/9b6806e3dd9c4c2c26760ba784437138c78b43a9a8e58a0bbafe5833026e3265637c9c7810224d66b79ba907b4d0be731c1a81ad043e10376aec3c18a49f3d84';
 
-     url = 'http://localhost/ajax.php';
+     // url = 'http://localhost/ajax.php';
 
     const fileAttachments = new Map([["flare.json", new URL(url,
     import
