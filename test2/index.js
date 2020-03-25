@@ -189,7 +189,9 @@ $(document).ready(function () {
 
         let nodes = root.descendants();
 
+
         let links = packageImports(nodes);
+        console.log(links);
 
 
         link = link
@@ -342,22 +344,28 @@ $(document).ready(function () {
         function packageHierarchy(classes) {
             let map = {};
 
+            classes.forEach(function (d) {
+                find(d.name, d);
+            });
+
             function find(name, data) {
-                let node = map[name], i;
+                let node = map[name];
+                let i;
+
                 if (!node) {
-                    node = map[name] = data || {name: name, children: []};
+                    map[name] = data || {name: name, children: []};
+                    node = map[name];
+
+
                     if (name.length) {
-                        node.parent = find(name.substring(0, i = name.lastIndexOf(".")));
+                        i = name.lastIndexOf(".");
+                        node.parent = find(name.substring(0, i));
                         node.parent.children.push(node);
                         node.key = name.substring(i + 1);
                     }
                 }
                 return node;
             }
-
-            classes.forEach(function (d) {
-                find(d.name, d);
-            });
 
             return map[""];
         }
@@ -376,7 +384,7 @@ $(document).ready(function () {
             nodes.forEach(function (d) {
                 if (d.data.imports) {
                     d.data.imports.forEach(function (i) {
-                        imports.push({source: map[d.data.name], target: map[i]});
+                        imports.push({source: map[d.data.name], target: map[i], path: map[d.data.name].path(map[i])}   );
                     });
                 }
             });
