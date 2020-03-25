@@ -37,9 +37,13 @@
                 </label>
 
                 <div class="flex_centered m-2 w-100 px-4">
-                    <select class="nice-select w-100" name="current_graph">
-                        <option value="1">Круговой</option>
-                        <option value="2">Пузырьчатый</option>
+                    <select class="nice-select w-100" id="graph_type_handler">
+                        <option value="hierarchy">
+                            Круговой
+                        </option>
+                        <option value="stratify">
+                            Пузырьчатый
+                        </option>
                     </select>
                 </div>
             </div>
@@ -50,7 +54,7 @@
                 </label>
 
                 <div class="flex_centered m-2 w-100 px-4">
-                    <select class="nice-select w-100" name="data_source" id="data_source_handler">
+                    <select class="nice-select w-100"  id="data_source_handler">
                         <option value="flare">
                             Зависимости библиотеки
                         </option>
