@@ -47,6 +47,14 @@
 
     let betaf = 50;
     let beta = betaf / 100;
+    let data;
+
+
+    let diameter = 960;
+    let radius = diameter / 2;
+    let innerRadius = radius - 120;
+    let cluster = d3.cluster()
+        .size([360, innerRadius]);
 
 
     bubble_layer = vis.append('g').attrs({
@@ -54,74 +62,121 @@
     });
 
 
-    d3.csv('flare.csv', function (data) {
+    d3.json('/flare.json', function (er, cl) {
+        data = cl;
 
-        return d3.csv('flare_links.csv', function (links_data) {
-            var bubbles, enb, index, links, root;
+        console.log(data);
 
-            a = stratify(data);
+        let bubbles, enb, index, links, root;
 
-
-            root = stratify(data).sum(function (d) {
-                return d.value;
-            }).sort(function (a, b) {
-                return d3.descending(a.value, b.value);
-            });
-            pack(root);
-            index = {};
-            root.eachBefore(function (d) {
-                index[d.data.id] = d;
-                return index[d.data.id];
-            });
-
-            links_data.forEach(function (d) {
-                d.source = index[d.source];
-                d.target = index[d.target];
-                d.path = d.source.path(d.target);
-                return d.path;
-            });
+        // a = stratify(data);
 
 
-            bubbles = bubble_layer.selectAll('.bubble').data(root.descendants());
+         root = d3.hierarchy(packageHierarchy(data), (d) => d.children);
+        cluster(root);
 
-            enb = bubbles.enter().append('circle').attrs({
-                "class": 'bubble',
-                cx: function (d) {
-                    return d.x;
-                },
-                cy: function (d) {
-                    return d.y;
-                },
-                r: function (d) {
-                    return d.r;
-                }
-            });
-            enb.append('title').text(function (d) {
-                return d.id.substring(d.id.lastIndexOf(".") + 1).split(/(?=[A-Z][^A-Z])/g).join(' ');
-            });
-            links = bubble_layer.selectAll('.link').data(links_data);
+        pack(root);
+        index = {};
+        // root.eachBefore(function (d) {
+        //     index[d.data.id] = d;
+        //     return index[d.data.id];
+        // });
 
-            svg.on('click', function (d) {
-                betaf += 10;
-                beta = betaf / 100;
-                links.each(function (d1) {
-                    d1.classed("link--target", false)
-                        .classed("link--source", true)
-                })
-
-                // bubble_layer.selectAll('.link').enter().curve(d3.curveBundle.beta(beta));
-            });
+        let nodes = root.descendants();
 
 
-            return links.enter().append('path').attrs({
-                "class": 'link',
-                d: function (d) {
-                    return line(d.path);
-                }
-            });
+        links_data = packageImports(nodes);
 
 
+        // links_data.forEach(function (d) {
+        //     d.source = index[d.source];
+        //     d.target = index[d.target];
+        //     d.path = d.source.path(d.target);
+        //     return d.path;
+        // });
+
+
+        bubbles = bubble_layer.selectAll('.bubble').data(nodes);
+
+        enb = bubbles.enter().append('circle').attrs({
+            "class": 'bubble',
+            cx: function (d) {
+                return d.x;
+            },
+            cy: function (d) {
+                return d.y;
+            },
+            r: function (d) {
+                return d.r;
+            }
+        });
+        enb.append('title').text(function (d) {
+            return d.id;
+        });
+        links = bubble_layer.selectAll('.link').data(links_data);
+
+
+        return links.enter().append('path').attrs({
+            "class": 'link',
+            d: function (d) {
+                return line(d.path);
+            }
         });
     });
+
+
+    // Lazily construct the package hierarchy from class names.
+    function packageHierarchy(classes) {
+        let map = {};
+
+        classes.forEach(function (d) {
+            find(d.name, d);
+        });
+
+        function find(name, data) {
+            let node = map[name];
+            let i;
+
+            if (!node) {
+                map[name] = data || {name: name, children: []};
+                node = map[name];
+
+
+                if (name.length) {
+                    i = name.lastIndexOf(".");
+                    node.parent = find(name.substring(0, i));
+                    node.parent.children.push(node);
+                    node.key = name.substring(i + 1);
+                }
+            }
+            return node;
+        }
+
+        return map[""];
+    }
+
+
+    // Return a list of imports for the given array of nodes.
+    function packageImports(nodes) {
+        let map = {},
+            imports = [];
+
+        // Compute a map from name to node.
+        nodes.forEach(function (d) {
+            map[d.data.name] = d;
+        });
+
+        // For each import, construct a link from the source to target node.
+        nodes.forEach(function (d) {
+            if (d.data.imports) {
+                d.data.imports.forEach(function (i) {
+                    imports.push({source: map[d.data.name], target: map[i], path: map[d.data.name].path(map[i])});
+                });
+            }
+        });
+
+        return imports;
+    }
+
 
 }).call(this);
