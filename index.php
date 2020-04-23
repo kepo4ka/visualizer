@@ -13,8 +13,10 @@
 
     <link rel="stylesheet" href="assets/css/helper.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-
+    <style id="link_dynamic_style">
+            .link {
+                stroke-opacity: 0.1;
+            }
     </style>
 </head>
 <body>
@@ -58,7 +60,7 @@
                         <option value="flare">
                             Зависимости библиотеки
                         </option>
-                        <option value="generator" disabled>
+                        <option value="generator">
                             Случайные данные
                         </option>
                         <option value="elibrary">
@@ -84,13 +86,26 @@
 
             <div class="d-flex align-items-center flex-column bg-white mx-2 my-4 p-2 rounded">
 
-                <label class="text-center m-0 font-weight-light">
-                    Степень жгутирования = <span id="value-simple" class="font-weight-bold">1</span>
-                </label>
-                <div class="col-12 m-0">
-                    <div id="slider-simple"></div>
+               <div class="border-bottom d-flex align-items-center flex-column">
+                   <label class="text-center m-0 font-weight-light">
+                       Степень жгутирования = <span id="value-simple" class="font-weight-bold">1</span>
+                   </label>
+                   <div class="col-12 m-0 ">
+                       <div id="slider-simple"></div>
+                   </div>
+               </div>
+
+                <div class="border-bottom d-flex align-items-center flex-column">
+                    <label class="text-center mt-3 font-weight-light">
+                        Прозрачность = <span id="link_opacity_value" class="font-weight-bold">1</span>
+                    </label>
+                    <div class="col-12 m-0 ">
+                        <div id="link_opacity_slider"></div>
+                    </div>
                 </div>
             </div>
+
+
         </div>
 
 
