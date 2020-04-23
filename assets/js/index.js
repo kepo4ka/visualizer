@@ -18,17 +18,14 @@ $(document).ready(function () {
     let url = '';
 
     let data = {};
+    let global_cl = {};
 
     let k = 1;
     let x, y;
     let beta_value = parseFloat(localStorage.getItem('beta_value') || 0);
-    let diameter = 960;
-    let radius = diameter / 2;
-    let innerRadius = radius - 120;
+    let link_opacity = parseFloat(localStorage.getItem('link_opacity') || 0.5);
     let data_loaded = false;
 
-    let cluster = d3.cluster()
-        .size([360, innerRadius]);
 
     getDataUrl();
     menuSetup();
@@ -68,8 +65,6 @@ $(document).ready(function () {
 
 
     function getDataUrl() {
-
-
         $node_count_container.hide();
 
         switch (data_source) {
@@ -78,13 +73,14 @@ $(document).ready(function () {
                 break;
             case 'elibrary':
                 $node_count_container.show();
-
                 $node_count_input.val(node_length);
 
                 url = '/ajax.php?l=' + node_length;
                 break;
             case 'generator':
-                url = '/generator.php';
+                $node_count_container.show();
+                $node_count_input.val(node_length);
+                url = '/ajax.php?type=generate&l=' + node_length;
                 break;
         }
 
@@ -93,25 +89,19 @@ $(document).ready(function () {
         $graph_type_handler.val(graph_type);
 
         d3.json(url, function (er, cl) {
-
+            global_cl = cl;
             data_loaded = true;
 
             switch (graph_type) {
                 case 'hierarchy':
-                    data = cl;
+                    data = global_cl;
                     graphBuild1();
                     break;
 
                 case 'stratify':
-
-                    if (!checkOneRoot(cl)) {
-                        // cl = addOneRoot(cl);
-                    }
-                    data = convertJsonData(cl);
-                    console.log(data);
-
-                    links_data = convertJsonDataLinks(cl);
-                    graphBuild2();
+                    data = convertJsonData(global_cl);
+                    links_data = convertJsonDataLinks(global_cl);
+                    graphBuild2(links_data);
                     break;
             }
             preloaderDisable();
@@ -119,6 +109,19 @@ $(document).ready(function () {
         });
 
     }
+
+    function reDraw() {
+        switch (graph_type) {
+            case 'hierarchy':
+                graphBuild1();
+                break;
+
+            case 'stratify':
+                graphBuild2(links_data);
+                break;
+        }
+    }
+
 
     function menuSetup() {
         BetaSlider();
@@ -139,7 +142,7 @@ $(document).ready(function () {
                 d3.select('#value-simple').text(d3.format('.2')(val));
                 beta_value = val;
                 localStorage.setItem('beta_value', beta_value);
-                getDataUrl();
+                reDraw();
             });
 
         let gSimple = d3
@@ -152,8 +155,38 @@ $(document).ready(function () {
         gSimple.call(sliderSimple);
 
         d3.select('#value-simple').text(sliderSimple.value());
+
+
+        let LinkOpacitySlider = d3
+            .sliderBottom()
+            .min(0)
+            .max(1)
+            .width(200)
+            .ticks(10)
+            .default(link_opacity)
+            .on('onchange', val => {
+                d3.select('#link_opacity_value').text(d3.format('.2')(val));
+                link_opacity = val;
+                localStorage.setItem('link_opacity', link_opacity);
+                DynamicLinksStyle();
+            });
+
+        let gSimple1 = d3
+            .select('#link_opacity_slider')
+            .append('svg')
+            .append('g')
+            .attr('transform', 'translate(50,30)');
+
+
+        gSimple1.call(LinkOpacitySlider);
+
+        d3.select('#link_opacity_value').text(LinkOpacitySlider.value());
     }
 
+    function DynamicLinksStyle() {
+        const tag = document.getElementById('link_dynamic_style');
+        tag.innerHTML = '.link { stroke-opacity: ' + link_opacity + '; }';
+    }
 
     function preloaderActivate() {
         $preloader.fadeIn();
@@ -214,6 +247,15 @@ $(document).ready(function () {
         svg.call(zoom);
 
         let root = d3.hierarchy(packageHierarchy(data), (d) => d.children);
+
+
+        let diameter = node_length * 5 + 900;
+        let radius = diameter / 2;
+        let innerRadius = radius - 120;
+
+        let cluster = d3.cluster()
+            .size([360, innerRadius]);
+
         cluster(root);
 
         let nodes = root.descendants();
@@ -324,14 +366,14 @@ $(document).ready(function () {
                 });
 
             link
-                .classed("link--primary", function (l) {
+                .classed("link--target", function (l) {
                     if (l.target === d) {
 
                         l.source.have_source = true;
                         return true;
                     }
                 })
-                .classed("link--primary1", function (l) {
+                .classed("link--source", function (l) {
                     if (l.source === d) {
 
                         l.target.have_target = true;
@@ -532,11 +574,12 @@ $(document).ready(function () {
         return converted;
     }
 
-    function graphBuild2() {
+    function graphBuild2(p_links_data) {
         let bubble_layer, h, height, line, pack, stratify, svg, vis, w, width, zoom, zoomable_layer;
         let bubbles, enb, index, links, root;
 
 
+        p_links_data = convertJsonDataLinks(global_cl);
         svg = d3.select("#graph_svg");
         svg.select("#first").remove();
 
@@ -608,13 +651,18 @@ $(document).ready(function () {
             return index[d.data.id];
         });
 
-        links_data.forEach(function (d) {
+        let loc_links_data = p_links_data.slice();
+
+
+        loc_links_data.forEach(function (d) {
+
             d.source = index[d.source];
             d.target = index[d.target];
             d.path = d.source.path(d.target);
+
             return d.path;
         });
-        links = bubble_layer.selectAll('.link').data(links_data).enter()
+        links = bubble_layer.selectAll('.link').data(loc_links_data).enter()
             .append('path')
             .attr('class', 'link')
             .attr('d', d => line(d.source.path(d.target)));
