@@ -1,6 +1,8 @@
 <?php
 
 require_once __DIR__ . '/init.php';
+require_once __DIR__ . '/generator.php';
+
 
 $length = 20;
 
@@ -13,6 +15,7 @@ if (!empty($_GET['type'])) {
     $type = preg_replace('/[^\w]/m', '', $_GET['type']);
 } else {
     $type = 'AuthorsRelByPublications';
+    $type = 'generate';
 }
 
 if (empty($type)) {
@@ -64,8 +67,11 @@ switch ($type) {
 //      $elib = new ElibraryDB();
 //        $info = $elib->updateRublics();
         break;
-}
 
+    case 'generate':
+        $info = generate($length);
+        break;
+}
 
 
 
