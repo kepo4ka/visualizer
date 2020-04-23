@@ -132,9 +132,8 @@ class GraphData
             }
 
             $new_item['rubric'] = $temp_rubrics[0]['rubric'];
-            $new_item['rubric_md5'] = splitMd5($new_item['rubric']);
+            $new_item['rubric_md5'] = 'elibrary.' . splitMd5($new_item['rubric']);
             $new_item['name'] = $new_item['rubric_md5'] . $new_item['name'];
-
 
             $q = 'select distinct publications_to_authors.authorid FROM publications, publications_to_authors WHERE publications_to_authors.authorid<>?s AND publications.id=publications_to_authors.publicationid AND publications.rubric=?s';
 
@@ -149,6 +148,7 @@ class GraphData
 
             $graph_items[] = $new_item;
         }
+
         return $graph_items;
     }
 
@@ -209,6 +209,8 @@ class GraphData
         foreach ($list as $item) {
             $names[] = $item[$primary_field];
         }
+
+
         unset($item);
 
         $new_info = [];
@@ -218,13 +220,16 @@ class GraphData
             $temp[$imports_field] = [];
 
             foreach ($item[$imports_field] as $key1 => $item1) {
-                if (in_array($item1, $names)) {
-                    $temp[$imports_field][] = $item1;
+                foreach ($names as $name) {
+                    if ($item1 === $name) {
+                        $temp[$imports_field][] = $item1;
+                        break;
+                    }
                 }
             }
 
             if (empty($temp[$imports_field])) {
-                continue;
+//                continue;
             }
             $new_info[] = $temp;
         }
