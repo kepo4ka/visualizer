@@ -41,26 +41,35 @@ body, html {
 }
 
 .node--target {
-    fill: #1d94ff;
+    fill: #dc3545;
 }
 
 .node--source.node--target {
-    fill: blueviolet;
+    fill: #1d94ff;
 }
+
+
 
 .link--source,
-.link--target {
+.link--target,
+.link--primary{
     stroke-opacity: 1;
-    stroke-width: 2px;
+    stroke-width: 3px;
+    z-index: 3;
 }
 
-.link--source {
-    stroke: #dc3545;
+.link--primary {
+    stroke: #dc3545 !important;
 }
+.link--source {
+    stroke: #dc3545 !important;
+}
+
 
 .link--target {
     stroke: #28a745;
 }
+
 
 .link--2 {
     stroke: purple !important;
@@ -118,9 +127,12 @@ body, html {
 .bubble.node--target {
     fill: #dc3545;
 }
-.bubble.node--source {
-    fill: #28a745;
+.bubble.node--source,
+.bubble.node--target {
+    fill: #1d94ff;
 }
+
+
 
 /*.link {*/
     /*fill: none;*/

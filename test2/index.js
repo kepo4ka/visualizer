@@ -35,6 +35,7 @@ $(document).ready(function () {
 
 
     $graph_type_handler.on('change', function () {
+        preloaderActivate();
         let new_type = $(this).val();
 
         if (graph_type == new_type) {
@@ -46,6 +47,7 @@ $(document).ready(function () {
     });
 
     $data_source_handler.on('change', function () {
+        preloaderActivate();
         let new_data_source = $(this).val();
 
         if (new_data_source == data_source) {
@@ -58,6 +60,7 @@ $(document).ready(function () {
     });
 
     $node_count_input.on('change', function () {
+        preloaderActivate();
         node_length = parseInt($(this).val()) || 10;
         localStorage.setItem('node_length', node_length);
         getDataUrl();
@@ -65,7 +68,7 @@ $(document).ready(function () {
 
 
     function getDataUrl() {
-        preloaderDisable();
+
 
         $node_count_container.hide();
 
@@ -100,10 +103,13 @@ $(document).ready(function () {
                     break;
 
                 case 'stratify':
+
                     if (!checkOneRoot(cl)) {
-                        cl = addOneRoot(cl);
+                        // cl = addOneRoot(cl);
                     }
                     data = convertJsonData(cl);
+                    console.log(data);
+
                     links_data = convertJsonDataLinks(cl);
                     graphBuild2();
                     break;
@@ -185,8 +191,8 @@ $(document).ready(function () {
         let graph_layer = zoomable_layer.append('g');
 
 
-        let link = graph_layer.append("g").selectAll(".link"),
-            node = graph_layer.append("g").selectAll(".node");
+        let node = graph_layer.append("g").selectAll(".node");
+        let link = graph_layer.append("g").selectAll(".link");
 
 
         graph_layer.attr(
@@ -318,19 +324,23 @@ $(document).ready(function () {
                 });
 
             link
-                .classed("link--target", function (l) {
+                .classed("link--primary", function (l) {
                     if (l.target === d) {
-                        return l.source.have_source = true;
+
+                        l.source.have_source = true;
+                        return true;
                     }
                 })
-                .classed("link--source", function (l) {
+                .classed("link--primary1", function (l) {
                     if (l.source === d) {
-                        return l.target.have_target = true;
+
+                        l.target.have_target = true;
+                        return true;
                     }
                 })
-                .filter(function (l) {
-                    return l.target === d || l.source === d;
-                })
+                // .filter(function (l) {
+                //     return l.target === d || l.source === d;
+                // })
                 .each(function () {
                     this.parentNode.appendChild(this);
                 });
@@ -351,7 +361,8 @@ $(document).ready(function () {
 
             link
                 .classed("link--target", false)
-                .classed("link--source", false);
+                .classed("link--source", false)
+                .classed("link--2", false);
 
             node
                 .classed("node--target", false)
@@ -439,6 +450,7 @@ $(document).ready(function () {
         let converted = [];
         let temp_ids = [];
 
+
         for (let i = 0; i < json.length; i++) {
             let split_names = json[i].name.split('.');
 
@@ -452,6 +464,7 @@ $(document).ready(function () {
             }
 
             let temp = '';
+
 
             for (let j = 0; j < split_names.length; j++) {
                 if (j === 0) {
@@ -481,7 +494,13 @@ $(document).ready(function () {
                     title = json[i].title;
                 }
                 else {
+
                     title = split_rubrics[j - 1];
+
+                    if (title !== undefined) {
+                        title = title.replace(/_/gi, ' ');
+                    }
+
                 }
 
                 let array = {
@@ -629,17 +648,19 @@ $(document).ready(function () {
                 .classed("link--target", function (l) {
 
                     if (l.target === d) {
-                        return l.source.have_source = true;
+                        l.source.have_source = true;
+                        return true;
                     }
                 })
                 .classed("link--source", function (l) {
                     if (l.source === d) {
-                        return l.target.have_target = true;
+                        l.target.have_target = true;
+                        return true;
                     }
                 })
-                .filter(function (l) {
-                    return l.target === d || l.source === d;
-                })
+                // .filter(function (l) {
+                //     return l.target === d || l.source === d;
+                // })
                 .each(function () {
                     this.parentNode.appendChild(this);
                 });
