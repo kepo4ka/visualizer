@@ -3,41 +3,64 @@
 require_once __DIR__ . '/init.php';
 
 
-$length = 100;
+function generate($length = 100)
+{
 
-if (!empty($_GET['l'])) {
-    $length = (int)$_GET['l'];
+    $names = generateNames();
+
+    $root = 'flare';
+    $tree = [
+        [
+            'full_path' => 'flare',
+            'name' => $root,
+            'child' => []
+        ]
+    ];
+
+
+    $res = [];
+
+    $res[] = $root;
+
+    $k = 0;
+
+    $deep = 5;
+    $info = generateTree($tree, $deep);
+
+
+    $list = [];
+    generateList($list, $info, $length * 5);
+
+
+    $array = [];
+
+    for ($i = 0; $i < $length; $i++) {
+        $temp = [];
+        $rand = rand(0, count($list) - 1);
+        $temp['name'] = $list[$rand];
+        $temp['size'] = rand(10, 10000);
+        $rand1 = rand(1, 10);
+
+        for ($j = 0; $j < $rand1; $j++) {
+            $rand2 = rand(0, count($list) - 2);
+            $item = $list[$rand2];
+
+            if ($item == $temp['name']) {
+                $item = $rand2 + 1;
+            }
+            $temp['imports'][] = $item;
+        }
+        $temp['imports'] = array_unique($temp['imports']);
+
+        $array[] = $temp;
+    }
+
+    return $array;
+
 }
 
-$names = generateNames();
-
-$root = 'flare';
-$tree = [
-    [
-        'full_path' => 'flare',
-        'name' => $root,
-        'child' => []
-    ]
-];
-
-
-$res = [];
-
-$res[] = $root;
-
-$k = 0;
-
-$deep = 5;
-$info = generateTree($tree, $deep);
-
-
-$list = [];
-generateList($info);
-$info = $list;
-
-function generateList($tree, $length = 1000)
+function generateList(&$list, $tree, $length = 1000)
 {
-    global $list;
 
     if (count($list) >= $length) {
         return false;
@@ -50,7 +73,7 @@ function generateList($tree, $length = 1000)
         if (empty($tree[$i]['child'])) {
             $list[] = $tree[$i]['full_path'];
         } else {
-            generateList($tree[$i]['child'], $length);
+            generateList($list, $tree[$i]['child'], $length);
         }
     }
 }
@@ -124,12 +147,9 @@ function generateNames($length = 1000)
     for ($i = 0; $i < $length; $i++) {
         $parents[] = uniqid();
     }
-    shuffle(array_unique($parents));
+
+    $parents = array_unique($parents);
+    shuffle($parents);
 
     return $parents;
 }
-
-
-echo json_encode($info, JSON_UNESCAPED_UNICODE);
-exit;
-
