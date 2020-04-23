@@ -10,7 +10,8 @@ body, html {
 
 }
 
-#slider-simple {
+#slider-simple,
+#link_opacity_slider {
     max-height: 87px;
 }
 
@@ -25,7 +26,7 @@ body, html {
 
 .link {
     stroke: steelblue;
-    stroke-opacity: .4;
+
     fill: none;
     pointer-events: none;
 }
@@ -48,28 +49,20 @@ body, html {
     fill: #1d94ff;
 }
 
-
-
 .link--source,
-.link--target,
-.link--primary{
+.link--target {
     stroke-opacity: 1;
     stroke-width: 3px;
-    z-index: 3;
+
 }
 
-.link--primary {
-    stroke: #dc3545 !important;
-}
 .link--source {
-    stroke: #dc3545 !important;
+    stroke: #dc3545;
 }
-
 
 .link--target {
     stroke: #28a745;
 }
-
 
 .link--2 {
     stroke: purple !important;
@@ -91,16 +84,17 @@ body, html {
     background: rgba(0, 0, 0, 0.35);
     padding: 1rem;
 }
+
 .node_relations {
     position: absolute;
     padding: 1rem;
 }
 
 .node_relations_incoming {
-     background: rgba(37, 176, 31, 0.54);
+    background: rgba(37, 176, 31, 0.54);
     bottom: 0;
     right: 0;
- }
+}
 
 .node_relations_outcoming {
     background: rgba(232, 85, 68, 0.69);
@@ -113,12 +107,10 @@ body, html {
     height: 1rem;
 }
 
-
-
-
 .bubble {
-    fill: rgba(0,0,0,0.1);
+    fill: rgba(0, 0, 0, 0.1);
 }
+
 .bubble:hover {
     stroke: black;
     vector-effect: non-scaling-stroke;
@@ -127,31 +119,30 @@ body, html {
 .bubble.node--target {
     fill: #dc3545;
 }
+
 .bubble.node--source,
 .bubble.node--target {
     fill: #1d94ff;
 }
 
-
-
 /*.link {*/
-    /*fill: none;*/
-    /*stroke: rgb(60,120,205);*/
-    /*stroke-width: 0.87;*/
-    /*vector-effect: non-scaling-stroke;*/
-    /*pointer-events: none;*/
+/*fill: none;*/
+/*stroke: rgb(60,120,205);*/
+/*stroke-width: 0.87;*/
+/*vector-effect: non-scaling-stroke;*/
+/*pointer-events: none;*/
 /*}*/
 
 /*.link--target {*/
-    /*stroke-width: 1;*/
+/*stroke-width: 1;*/
 /*}*/
 
 /*.link--source {*/
-    /*stroke-width: 0.5 !important;*/
+/*stroke-width: 0.5 !important;*/
 /*}*/
 
 /*.danger {*/
-    /*stroke: #64abff;*/
+/*stroke: #64abff;*/
 /*}*/
 
 .svg_info__item {
@@ -167,8 +158,6 @@ body, html {
     z-index: 1;
 
 }
-
-
 
 .transition-loader {
     position: absolute;
@@ -188,12 +177,14 @@ body, html {
     padding: 0 100px;
     text-align: center;
 }
+
 .transition-loader-inner label {
     font-size: 1em;
     padding: 1%;
     opacity: 0;
     display: inline-block;
 }
+
 .transition-loader-inner label:after {
     font-family: FontAwesome;
     content: '\f111';
@@ -247,6 +238,7 @@ body, html {
         transform: translateX(300px) scale(2);
     }
 }
+
 @-webkit-keyframes loader {
     0% {
         opacity: 0;
