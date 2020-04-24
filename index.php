@@ -86,7 +86,7 @@
 
             <div class="d-flex align-items-center flex-column bg-white mx-2 my-4 p-2 rounded">
 
-               <div class="border-bottom d-flex align-items-center flex-column">
+               <div class="border-bottom d-flex align-items-center flex-column w-100">
                    <label class="text-center m-0 font-weight-light">
                        Степень жгутирования = <span id="value-simple" class="font-weight-bold">1</span>
                    </label>
@@ -95,8 +95,8 @@
                    </div>
                </div>
 
-                <div class="border-bottom d-flex align-items-center flex-column">
-                    <label class="text-center mt-3 font-weight-light">
+                <div class="border-bottom d-flex align-items-center flex-column w-100">
+                    <label class="text-center mt-3 mb-0 font-weight-light">
                         Прозрачность = <span id="link_opacity_value" class="font-weight-bold">1</span>
                     </label>
                     <div class="col-12 m-0 ">
