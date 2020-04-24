@@ -75,12 +75,12 @@ $(document).ready(function () {
                 $node_count_container.show();
                 $node_count_input.val(node_length);
 
-                url = '/ajax.php?l=' + node_length;
+                url = '/ajax.php?source=elibrary&l=' + node_length;
                 break;
             case 'generator':
                 $node_count_container.show();
                 $node_count_input.val(node_length);
-                url = '/ajax.php?type=generate&l=' + node_length;
+                url = '/ajax.php?source=generate&l=' + node_length;
                 break;
         }
 
@@ -292,8 +292,8 @@ $(document).ready(function () {
             .on("mouseout", mouseouted);
 
         node.append('title').text(function (d) {
-            if (d.data.title !== undefined && d.data.title.length) {
-                return d.data.title;
+            if (d.data.title1 !== undefined && d.data.title1.length) {
+                return d.data.title1;
             }
             return d.data.name;
         });
@@ -700,15 +700,15 @@ $(document).ready(function () {
                         return true;
                     }
                 })
-                .classed("link--source", function (l) {
+                .classed("link--rubric_md5", function (l) {
                     if (l.source === d) {
                         l.target.have_target = true;
                         return true;
                     }
                 })
-                // .filter(function (l) {
-                //     return l.target === d || l.source === d;
-                // })
+                .filter(function (l) {
+                    return l.target === d || l.source === d;
+                })
                 .each(function () {
                     this.parentNode.appendChild(this);
                 });

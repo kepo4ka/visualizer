@@ -615,3 +615,45 @@ function getTime($start)
     echo 'Время выполнения скрипта: ' . round(microtime(true) - $start, 4) . ' сек.';
     exit;
 }
+
+/**
+ * Удалить у каждого элемента списка его ссылки, которые ссылаются не на элементы из этого же списка
+ * @param $list array Исходный список
+ * @param $primary_field string Ключ для ссылок
+ * @param $imports_field string Поле, содержащее список ссылок
+ * @return array Очищенный список
+ */
+function clearEmptyReferences($list, $primary_field, $imports_field)
+{
+    $names = [];
+
+    foreach ($list as $item) {
+        $names[] = $item[$primary_field];
+    }
+
+
+    unset($item);
+
+    $new_info = [];
+
+    foreach ($list as $key => $item) {
+        $temp = $item;
+        $temp[$imports_field] = [];
+
+        foreach ($item[$imports_field] as $key1 => $item1) {
+            foreach ($names as $name) {
+                if ($item1 === $name) {
+                    $temp[$imports_field][] = $item1;
+                    break;
+                }
+            }
+        }
+
+        if (empty($temp[$imports_field])) {
+//                continue;
+        }
+        $new_info[] = $temp;
+    }
+
+    return $new_info;
+}

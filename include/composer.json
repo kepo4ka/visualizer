@@ -1,0 +1,12 @@
+{
+    "name": "kepo4ka/visualizer",
+    "authors": [
+        {
+            "name": "kepo4ka",
+            "email": "konstantin.bugulov@mail.ru"
+        }
+    ],
+    "require": {
+        "kepo4ka/helper": "dev-master"
+    }
+}

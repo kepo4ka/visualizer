@@ -1,6 +1,13 @@
 <?php
-
 require_once __DIR__ . '/init.php';
+
+
+$info = generate($length);
+
+$info = clearEmptyReferences($info, PRIMARY_FIELD, REFEREFCES_FIELD);
+
+echo json_encode($info, JSON_UNESCAPED_UNICODE);
+exit;
 
 
 function generate($length = 100)

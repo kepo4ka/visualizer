@@ -123,6 +123,7 @@ class GraphData
             $new_item['fio'] = $current_item['fio'];
             $new_item['post'] = $current_item['post'];
             $new_item['title'] = $current_item['fio'];
+            $new_item['title1'] = $new_item['post'];
 
 
             $temp_rubrics = $this->elibDb->getAuthorRubrics($current_item['id']);
@@ -132,7 +133,7 @@ class GraphData
             }
 
             $new_item['rubric'] = $temp_rubrics[0]['rubric'];
-            $new_item['rubric_md5'] = 'elibrary.' . splitMd5($new_item['rubric']);
+            $new_item['rubric_md5'] = ' .' . splitMd5($new_item['rubric']);
             $new_item['name'] = $new_item['rubric_md5'] . $new_item['name'];
 
             $q = 'select distinct publications_to_authors.authorid FROM publications, publications_to_authors WHERE publications_to_authors.authorid<>?s AND publications.id=publications_to_authors.publicationid AND publications.rubric=?s';
@@ -195,47 +196,7 @@ class GraphData
         return $graph_items;
     }
 
-    /**
-     * Удалить у каждого элемента списка его ссылки, которые ссылаются не на элементы из этого же списка
-     * @param $list array Исходный список
-     * @param $primary_field string Ключ для ссылок
-     * @param $imports_field string Поле, содержащее список ссылок
-     * @return array Очищенный список
-     */
-    function clearEmptyReferences($list, $primary_field, $imports_field)
-    {
-        $names = [];
 
-        foreach ($list as $item) {
-            $names[] = $item[$primary_field];
-        }
-
-
-        unset($item);
-
-        $new_info = [];
-
-        foreach ($list as $key => $item) {
-            $temp = $item;
-            $temp[$imports_field] = [];
-
-            foreach ($item[$imports_field] as $key1 => $item1) {
-                foreach ($names as $name) {
-                    if ($item1 === $name) {
-                        $temp[$imports_field][] = $item1;
-                        break;
-                    }
-                }
-            }
-
-            if (empty($temp[$imports_field])) {
-//                continue;
-            }
-            $new_info[] = $temp;
-        }
-
-        return $new_info;
-    }
 }
 
 

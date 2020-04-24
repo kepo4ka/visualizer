@@ -1,0 +1,53 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "8f1259f055733995e4eb4a20ab4babf5",
+    "packages": [
+        {
+            "name": "kepo4ka/helper",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kepo4ka/myHelper.git",
+                "reference": "953b1b5cc9ee1ae938d3ef79dc1cc20a0ecdadad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kepo4ka/myHelper/zipball/953b1b5cc9ee1ae938d3ef79dc1cc20a0ecdadad",
+                "reference": "953b1b5cc9ee1ae938d3ef79dc1cc20a0ecdadad",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Helper\\": "php/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "kepo4ka",
+                    "email": "ksdfsad@asfsef.se"
+                }
+            ],
+            "description": "A simple hello world composer package",
+            "time": "2020-04-22T15:56:28+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "kepo4ka/helper": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
