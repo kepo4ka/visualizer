@@ -9,6 +9,8 @@ $(document).ready(function () {
     const $full_preloader = $('.full_preloader');
     const $node_relations_outcoming = $('.node_relations_outcoming');
     const $node_relations_incoming = $('.node_relations_incoming');
+    const $restriction_filter_input_container = $('#restriction_filter_input_container');
+    const $modal_info_container = $('#modal_info_container');
 
 
     let data_source = localStorage.getItem('data_source') || 'flare';
@@ -23,6 +25,7 @@ $(document).ready(function () {
 
     let data = {};
     let global_cl = {};
+    let global_cl_not_filtered = {};
 
     let k = 1;
     let x, y;
@@ -30,7 +33,7 @@ $(document).ready(function () {
     let link_opacity = parseFloat(localStorage.getItem('link_opacity') || 0.5);
     let data_loaded = false;
 
-
+    DynamicLinksStyle();
     getDataUrl();
     menuSetup();
 
@@ -75,10 +78,13 @@ $(document).ready(function () {
 
     function getDataUrl() {
         $node_count_container.hide();
+        $restriction_filter_input_container.hide();
 
         switch (data_source) {
             case 'flare':
                 url = '/flare.json';
+
+
                 break;
             case 'elibrary':
                 $node_count_container.show();
@@ -89,11 +95,13 @@ $(document).ready(function () {
             case 'generate':
                 $node_count_container.show();
                 $node_count_input.val(node_length);
+
                 url = '/ajax.php?source=generate&l=' + node_length;
                 break;
             case 'covid':
                 $node_count_container.show();
                 $node_count_input.val(node_length);
+                $restriction_filter_input_container.show();
                 url = '/ajax.php?source=covid&l=' + node_length;
                 break;
         }
@@ -103,23 +111,8 @@ $(document).ready(function () {
         $graph_type_handler.val(graph_type);
 
         d3.json(url, function (er, cl) {
-            global_cl = cl;
-            data_loaded = true;
-
-            switch (graph_type) {
-                case 'hierarchy':
-                    data = global_cl;
-                    graphBuild1();
-                    break;
-
-                case 'stratify':
-                    data = convertJsonData(global_cl);
-                    links_data = convertJsonDataLinks(global_cl);
-                    graphBuild2(links_data);
-                    break;
-            }
-            preloaderDisable();
-            $node_count_input.attr('disabled', false);
+            global_cl_not_filtered = JSON.parse(JSON.stringify(cl));
+            updateData(cl);
         });
 
     }
@@ -136,11 +129,56 @@ $(document).ready(function () {
         }
     }
 
+    /**
+     * @return {boolean}
+     */
+    function updateData(cl) {
+        global_cl = cl;
+        data_loaded = true;
+
+
+        if (!global_cl.length) {
+            alert('Нет данных!');
+            preloaderDisable();
+
+            return false;
+        }
+
+        switch (graph_type) {
+            case 'hierarchy':
+                data = global_cl;
+                graphBuild1();
+                break;
+
+            case 'stratify':
+                data = convertJsonData(global_cl);
+                links_data = convertJsonDataLinks(global_cl);
+                graphBuild2(links_data);
+                break;
+        }
+        preloaderDisable();
+        return true;
+    }
 
     function menuSetup() {
         BetaSlider();
 
         $('.nice-select').niceSelect();
+
+
+        $("#restriction_filter_input").bsMultiSelect()
+            .on('change', function () {
+                let key = $(this).data('filter');
+
+                let filter = {};
+
+                filter[key] = $(this).val();
+
+                global_cl = FilterGlobalData(global_cl_not_filtered, filter);
+                updateData(global_cl);
+
+            })
+
     }
 
 
@@ -210,6 +248,8 @@ $(document).ready(function () {
     function preloaderDisable() {
         $preloader.fadeOut();
         $full_preloader.hide();
+        $node_count_input.attr('disabled', false);
+
     }
 
 
@@ -304,9 +344,10 @@ $(document).ready(function () {
             })
             .on("mouseover", mouseovered)
             .on("mouseout", mouseouted)
-            .on('click', function (d) {
-
-                alert(d.data.id);
+            .on('click', function (d, i, nodes) {
+                // const node = d3.select(nodes[i]);
+                // node.classed('node--selected', !node.classed('node--selected'));
+                getAjaxAirportInfo(d.data.id);
             });
 
         node.append('title').text(function (d) {
@@ -794,4 +835,77 @@ $(document).ready(function () {
     }
 
 
+    function getAjaxAirportInfo(id) {
+
+        $.ajax({
+            method: "get",
+            url: "ajax.php?source=covid&type=airport",
+            data: {
+                source: 'covid',
+                type: 'airport',
+                id: id
+            },
+            dataType: 'json',
+            success: function (response) {
+                setModalInfo(response);
+
+            },
+            error: function () {
+                alert('Не удалось получить информацию об Аэропорте!');
+            }
+        });
+    }
+
+
+    function setModalInfo(info) {
+
+        let keys = Object.keys(info);
+
+
+        for (let i = 0; i < keys.length; i++) {
+            if (info[keys[i]] == null) {
+                info[keys[i]] = '-';
+            }
+
+            if (keys[i]=='restriction_type')
+            {
+                console.log( info[keys[i]], resriction_types);
+                info[keys[i]] = resriction_types[info[keys[i]]];
+            }
+
+
+            $modal_info_container.find('.' + keys[i]).text(info[keys[i]]);
+
+        }
+
+        $modal_info_container.modal('show');
+    }
 });
+
+
+function FilterGlobalData(p_data_array, filter) {
+
+    let data_array = JSON.parse(JSON.stringify(p_data_array));
+
+    let keys = Object.keys(filter);
+
+    if (!keys.length) {
+        return data_array;
+    }
+    let bad_array = [];
+
+    for (let i = 0; i < keys.length; i++) {
+        for (let j = 0; j < data_array.length; j++) {
+
+            if (filter[keys[i]].indexOf(data_array[j][keys[i]]) > -1) {
+                bad_array.push(data_array[j]['name']);
+            }
+        }
+    }
+
+    for (let i = 0; i < data_array.length; i++) {
+        data_array[i]['imports'] = data_array[i]['imports'].filter(x => bad_array.indexOf(x) == -1);
+    }
+
+    return data_array;
+}
