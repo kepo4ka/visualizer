@@ -3,7 +3,7 @@ $log_path = 'log.log';
 $proccess_id = '';
 $redis_enabled = false;
 
-$length = 20;
+$length = 500;
 $primary_field = 'name';
 $references_field = 'imports';
 
