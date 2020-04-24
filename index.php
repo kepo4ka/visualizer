@@ -1,3 +1,15 @@
+<?php
+
+$resriction_types = [
+    'travel_ban' => 'Полный запрет',
+    'travel_ban_eu' => 'Полный запрет (Европа)',
+    'non-global_restriction' => 'Не глобальные ограничения',
+    'quarantine_measures' => 'Меры при карантине',
+    '' => 'Игнорирование (или нет данных)'
+]
+
+?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -10,16 +22,22 @@
     <link rel="stylesheet" href="assets/lib/bootstrap4/bootstrap.min.css">
     <link rel="stylesheet" href="assets/lib/jquery-nice-select-1.1.0/css/nice-select.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="assets/lib/bootstrap_multiselect/BsMultiSelect.min.css">
 
     <link rel="stylesheet" href="assets/css/helper.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <style id="link_dynamic_style">
-            .link {
-                stroke-opacity: 0.1;
-            }
+        .link {
+            stroke-opacity: 0.1;
+        }
     </style>
 </head>
 <body>
+
+<script>
+    let resriction_types = JSON.parse('<?=json_encode($resriction_types, JSON_UNESCAPED_UNICODE)?>');
+</script>
+
 
 <div class="full_preloader">
 </div>
@@ -56,7 +74,7 @@
                 </label>
 
                 <div class="flex_centered m-2 w-100 px-4">
-                    <select class="nice-select w-100"  id="data_source_handler">
+                    <select class="nice-select w-100" id="data_source_handler">
                         <option value="flare">
                             Зависимости библиотеки
                         </option>
@@ -73,15 +91,51 @@
                 </div>
 
 
-                <div class="flex_centered flex-column" id="node_count_container">
-                    <label class="text-center m-0 font-weight-light">
-                        Количество вершин
-                    </label>
+            </div>
 
-                    <div class="flex_centered m-2 w-100 px-4">
 
-                        <input id="node_count_input" type="number" class="form-control" placeholder="0" min="5"
-                               max="1000">
+            <div id="restriction_filter_input_container">
+                <div class="-flex align-items-center flex-column bg-white mx-2 my-4 p-2 rounded">
+
+                    <div class="flex_centered flex-column">
+                        <label class="text-center m-0 font-weight-bold text-danger">
+                            Ограничения из-за COVID-19
+                        </label>
+
+                        <div class="flex_centered m-2 w-100 px-4">
+
+                            <select name="restriction" data-filter="restriction_type" id="restriction_filter_input"
+                                    class="form-control" multiple="multiple"
+                                    style="display: none;">
+
+                                <?php foreach ($resriction_types as $key => $value) {
+                                    ?>
+                                    <option <?= $key == 'travel_ban' ? 'selected' : '' ?> value="<?= $key ?>">
+                                        <?= $value ?>
+                                    </option>
+                                    <?php
+                                } ?>
+
+
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="node_count_container">
+                <div class="d-flex align-items-center flex-column bg-white mx-2 my-4 p-2 rounded">
+                    <div class="flex_centered flex-column">
+                        <label class="text-center m-0 font-weight-light">
+                            Количество вершин
+                        </label>
+
+                        <div class="flex_centered m-2 w-100 px-4">
+
+                            <input id="node_count_input" type="number" class="form-control" placeholder="0" min="5"
+                                   max="1000">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -89,14 +143,14 @@
 
             <div class="d-flex align-items-center flex-column bg-white mx-2 my-4 p-2 rounded">
 
-               <div class="border-bottom d-flex align-items-center flex-column w-100">
-                   <label class="text-center m-0 font-weight-light">
-                       Степень жгутирования = <span id="value-simple" class="font-weight-bold">1</span>
-                   </label>
-                   <div class="col-12 m-0 ">
-                       <div id="slider-simple"></div>
-                   </div>
-               </div>
+                <div class="border-bottom d-flex align-items-center flex-column w-100">
+                    <label class="text-center m-0 font-weight-light">
+                        Степень жгутирования = <span id="value-simple" class="font-weight-bold">1</span>
+                    </label>
+                    <div class="col-12 m-0 ">
+                        <div id="slider-simple"></div>
+                    </div>
+                </div>
 
                 <div class="border-bottom d-flex align-items-center flex-column w-100">
                     <label class="text-center mt-3 mb-0 font-weight-light">
@@ -178,14 +232,204 @@
 </div>
 
 
-<script src="assets/lib/jquery/jquery-3.3.1.min.js"></script>
-<script src="assets/lib/bootstrap4/bootstrap.bundle.min.js"></script>
-<script src="assets/lib/jquery-nice-select-1.1.0/js/jquery.nice-select.min.js"></script>
-<script src="assets/lib/d3/d3.v4.js"></script>
-<script src="assets/lib/d3/d3-selection-multi.v0.4.js"></script>
-<script src="assets/lib/d3/d3-simple-slider.min.js"></script>
+<!-- Modal -->
+<div class="modal fade" id="modal_info_container" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Заголовок
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
 
-<script src="assets/js/index.js"></script>
+
+                <table class="table-bordered table table-hover">
+                    <thead class="bg-primary text-white">
+                    <tr>
+                        <td colspan="2" class="text-center">
+                            Город: <span class="city_name font-weight-bold"></span>
+                        </td>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr>
+                        <td>
+                            CPI
+                        </td>
+                        <td class="city_cpi">
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Уровень безопасности
+                        </td>
+                        <td class="city_safety">
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Часовой пояс
+                        </td>
+                        <td class="city_timezone">
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Численность населения
+                        </td>
+                        <td class="city_population">
+
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <table class="table-bordered table table-hover">
+
+                    <thead class="bg-success text-white ">
+                    <tr>
+                        <td colspan="2" class="text-center ">
+                            Страна: <span class="country_name font-weight-bold"></span>
+                        </td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            Другие названия
+                        </td>
+
+                        <td class="country_alter_name">
+                            <span class="country_alter_name"></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Континент
+                        </td>
+                        <td class="country_continent">
+                        </td>
+                    </tr>
+
+                    <tr class="text-danger">
+                        <td>
+                            Ограничения на въезд (COVID-19)
+                        </td>
+                        <td class="restriction_type">
+                        </td>
+                    </tr>
+
+                    <tr class="text-danger">
+                        <td>
+                            Описание ограничения (COVID-19)
+                        </td>
+                        <td class="restriction_text">
+                        </td>
+                    </tr>
+
+                    <tr class="text-danger">
+                        <td>
+                            Последнее обновление информации (COVID-19)
+                        </td>
+                        <td class="restriction_update_time">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Телефонный код
+                        </td>
+                        <td class="phone">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Столица
+                        </td>
+                        <td class="capital">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Язык
+                        </td>
+                        <td>
+                            <span class="language">
+                            </span>
+                            <span class="language1">
+                            </span>
+                            <span class="language2">
+                            </span>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td>
+                            Численность населения
+                        </td>
+                        <td class="country_population">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Национальная валюта
+                        </td>
+                        <td>
+                            <span class="country_currency_name">
+                            </span>
+                            <span class="country_currency">
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Площадь территории
+                        </td>
+                        <td class="country_area">
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    Закрыть
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script defer src="assets/lib/jquery/jquery-3.3.1.min.js"></script>
+<script defer src="assets/lib/popper.js/dist/umd/popper.min.js"></script>
+<script defer src="assets/lib/bootstrap4/bootstrap.bundle.min.js"></script>
+<script defer src="assets/lib/jquery-nice-select-1.1.0/js/jquery.nice-select.min.js"></script>
+<script defer src="assets/lib/d3/d3.v4.js"></script>
+<script defer src="assets/lib/d3/d3-selection-multi.v0.4.js"></script>
+<script defer src="assets/lib/d3/d3-simple-slider.min.js"></script>
+<script defer src="assets/lib/bootstrap_multiselect/BsMultiSelect.min.js"></script>
+
+<script defer src="assets/js/index.js"></script>
 
 <script>
 
