@@ -31,7 +31,7 @@ function generate($length = 100)
 
     $k = 0;
 
-    $deep = 5;
+    $deep = rand(3, 7);
     $info = generateTree($tree, $deep);
 
 
@@ -87,7 +87,7 @@ function generateList(&$list, $tree, $length = 1000)
 
 function generateTree($tree, $deep, $name = '')
 {
-    $length = rand(12, 15);
+    $length = rand(5, 15);
 
     $deep--;
     if ($deep < 1) {
