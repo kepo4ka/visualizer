@@ -347,7 +347,13 @@ $(document).ready(function () {
             .on('click', function (d, i, nodes) {
                 // const node = d3.select(nodes[i]);
                 // node.classed('node--selected', !node.classed('node--selected'));
-                getAjaxAirportInfo(d.data.id);
+
+                switch (data_source) {
+                    case 'covid':
+                        getAjaxAirportInfo(d.data.id);
+                        break;
+                }
+
             });
 
         node.append('title').text(function (d) {
@@ -407,12 +413,12 @@ $(document).ready(function () {
             }
 
             if (outcoming.length) {
-                $node_relations_outcoming.html(outcoming.join('<br>'));
-                $node_relations_outcoming.show();
+                // $node_relations_outcoming.html(outcoming.join('<br>'));
+                // $node_relations_outcoming.show();
             }
             if (incoming.length) {
-                $node_relations_incoming.html(outcoming.join('<br>'));
-                $node_relations_incoming.show();
+                // $node_relations_incoming.html(outcoming.join('<br>'));
+                // $node_relations_incoming.show();
             }
         }
 
@@ -867,19 +873,35 @@ $(document).ready(function () {
                 info[keys[i]] = '-';
             }
 
-            if (keys[i]=='restriction_type')
-            {
-                console.log( info[keys[i]], resriction_types);
-                info[keys[i]] = resriction_types[info[keys[i]]];
+            if (keys[i] == 'destinations') {
+                continue;
             }
 
-
+            if (keys[i] == 'restriction_type') {
+                console.log(info[keys[i]], resriction_types);
+                info[keys[i]] = resriction_types[info[keys[i]]];
+            }
             $modal_info_container.find('.' + keys[i]).text(info[keys[i]]);
-
         }
+
+        $airport_destinations_list = $modal_info_container.find('.airport_destinations_list');
+
+        for (let i = 0; i < info['destinations'].length; i++) {
+            let keys = Object.keys(info['destinations'][i]);
+
+            let tr_element = document.createElement('tr');
+            for (let j = 0; j < keys.length; j++) {
+
+                $(tr_element).append('<td>' + info['destinations'][i][keys[j]] + "</td>");
+            }
+            $airport_destinations_list.append($(tr_element));
+        }
+
 
         $modal_info_container.modal('show');
     }
+
+
 });
 
 
