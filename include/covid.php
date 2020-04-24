@@ -20,19 +20,33 @@ if (!empty($_GET['type'])) {
 $covid = new CovidDB($length);
 
 
-switch ($type)
-{
+switch ($type) {
     case 'airports':
 
         $key = "covid_airports:$length";
         $info = redisGet($key);
-        if (empty($info))
-        {
+        if (empty($info)) {
             $info = $covid->getAirports();
             redisSet($key, $info);
         }
 
         break;
+
+    case 'airport':
+        $id = (int)$_GET['id'];
+
+        if (empty($id)) {
+            die;
+        }
+
+        $key = "covid_airport_info:$id";
+        $info = redisGet($key);
+        if (empty($info)) {
+            $info = $covid->getAirportFullInfo($id);
+            redisSet($key, $info);
+        }
+
+
 }
 
 
