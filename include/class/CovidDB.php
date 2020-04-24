@@ -39,16 +39,16 @@ class CovidDB
 
             $airport['name'] = $airport['id'];
 
-            $query = "select countries.restriction_type, countries.restriction_text, countries.name, countries.continent FROM cities, countries, airports
+            $query = "select countries.restriction_type, countries.name, countries.continent FROM cities, countries, airports
             where airports.id={$airport['id']} AND 
             airports.city_id=cities.id AND
             cities.country_iso=countries.iso
             AND 1";
 
             $airport['country'] = $this->db->getRow($query);
+            $airport['restriction_type'] = $airport['country']['restriction_type'];
 
-            $airport['title1'] = $airport['city_name'] . ' > ' . $airport['country']['name'] . ' > ' . $airport['country']['continent'] .
-            ' [' . $airport['country']['restriction_type'] . '] ';
+            $airport['title1'] = $airport['city_name'];
 
             $airport['rubric'] = "{$airport['country']['continent']}.{$airport['country']['name']}.{$airport['city_name']}";
 //            $airport['rubric_md5'] = ' .' . splitMd5($airport['rubric']);
@@ -65,7 +65,6 @@ class CovidDB
 
         $airports = clearEmptyReferences($airports, PRIMARY_FIELD, REFEREFCES_FIELD);
 
-        $imports_count = 0;
         foreach ($airports as &$airport) {
             $airport['rubric_md5'] = ' .' . splitMd5($airport['rubric']);
             $airport['name'] = $airport['rubric_md5'] . $airport['name'];
@@ -102,11 +101,45 @@ class CovidDB
                 $airport['imports'][] = $airport['name'];
             }
         }
-
-
         return $airports;
+    }
 
 
+    function getAirportFullInfo($id)
+    {
+        $query = "select 
+        airports.name as airport_name,
+        cities.name as city_name, 
+        cities.cpi as city_cpi,
+        cities.safety as city_safety,
+        cities.timezone as city_timezone,
+        cities.population as city_population,
+        cities.population as city_population,
+        countries.name as country_name,
+        countries.continent as country_continent,
+        countries.continent as country_continent,
+        countries.alternate_names as country_alter_name,
+        countries.restriction_type,
+        countries.restriction_text,
+        countries.restriction_update_time,
+        countries.phone,
+        countries.capital,
+        countries.language,
+        countries.language1,
+        countries.language2,
+        countries.population as country_population,
+        countries.population as country_population,
+        countries.currency_code as country_currency,
+        countries.currency_name as country_currency_name,
+        countries.area as country_area
+        from countries, airports, cities
+        where airports.id=$id
+        and airports.city_id=cities.id AND 
+        cities.country_iso = countries.iso
+        ";
+
+
+        return $this->db->getRow($query);
     }
 
 
