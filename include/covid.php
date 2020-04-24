@@ -23,7 +23,15 @@ $covid = new CovidDB($length);
 switch ($type)
 {
     case 'airports':
-        $info = $covid->getAirports();
+
+        $key = "covid_airports:$length";
+        $info = redisGet($key);
+        if (empty($info))
+        {
+            $info = $covid->getAirports();
+            redisSet($key, $info);
+        }
+
         break;
 }
 
