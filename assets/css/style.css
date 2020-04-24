@@ -122,7 +122,7 @@ body, html {
 }
 
 .bubble.node--source {
-    fill: #28a745 ;
+    fill: #28a745;
 }
 
 .bubble.node--target {
