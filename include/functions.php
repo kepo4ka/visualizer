@@ -650,7 +650,7 @@ function clearEmptyReferences($list, $primary_field, $imports_field)
         }
 
         if (empty($temp[$imports_field])) {
-//                continue;
+               continue;
         }
         $new_info[] = $temp;
     }
