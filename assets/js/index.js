@@ -12,7 +12,7 @@ $(document).ready(function () {
 
 
     let data_source = localStorage.getItem('data_source') || 'flare';
-    let node_length = parseInt(localStorage.getItem('node_length'));
+    let node_length = parseInt(localStorage.getItem('node_length')) || 10;
     if (node_length < 1) {
         node_length = 10;
     }
@@ -61,6 +61,7 @@ $(document).ready(function () {
     });
 
     $node_count_input.on('change', function () {
+        $node_count_input.attr('disabled', true);
         preloaderActivate();
         node_length = parseInt($(this).val());
         if (node_length < 1) {
@@ -118,7 +119,7 @@ $(document).ready(function () {
                     break;
             }
             preloaderDisable();
-
+            $node_count_input.attr('disabled', false);
         });
 
     }
@@ -302,7 +303,11 @@ $(document).ready(function () {
                 return d.data.name;
             })
             .on("mouseover", mouseovered)
-            .on("mouseout", mouseouted);
+            .on("mouseout", mouseouted)
+            .on('click', function (d) {
+
+                alert(d.data.id);
+            });
 
         node.append('title').text(function (d) {
             if (d.data.title1 !== undefined && d.data.title1.length) {
@@ -468,9 +473,21 @@ $(document).ready(function () {
 
             // For each import, construct a link from the source to target node.
             nodes.forEach(function (d) {
-                if (d.data.imports) {
+
+                if (d.data.imports !== undefined) {
                     d.data.imports.forEach(function (i) {
-                        imports.push({source: map[d.data.name], target: map[i], path: map[d.data.name].path(map[i])});
+
+                        try {
+                            imports.push({
+                                source: map[d.data.name],
+                                target: map[i],
+                                path: map[d.data.name].path(map[i])
+                            });
+                        }
+                        catch (e) {
+                            return true;
+                        }
+
                     });
                 }
             });
@@ -566,6 +583,9 @@ $(document).ready(function () {
                 converted.push(array);
             }
         }
+
+
+        console.log(converted);
 
         return converted;
     }
@@ -668,17 +688,29 @@ $(document).ready(function () {
 
 
         loc_links_data.forEach(function (d) {
-
-            d.source = index[d.source];
-            d.target = index[d.target];
-            d.path = d.source.path(d.target);
-
+            try {
+                d.source = index[d.source];
+                d.target = index[d.target];
+                d.path = d.source.path(d.target);
+            }
+            catch (e) {
+                return false;
+            }
             return d.path;
         });
         links = bubble_layer.selectAll('.link').data(loc_links_data).enter()
             .append('path')
             .attr('class', 'link')
-            .attr('d', d => line(d.source.path(d.target)));
+            .attr('d', function (d) {
+                try {
+                    let path = d.source.path(d.target);
+                    return line(path);
+                }
+                catch (e) {
+                    return null;
+                }
+
+            });
 
         bubbles = bubble_layer.selectAll('.bubble').data(root.descendants());
 
@@ -719,9 +751,9 @@ $(document).ready(function () {
                         return true;
                     }
                 })
-                .filter(function (l) {
-                    return l.target === d || l.source === d;
-                })
+                // .filter(function (l) {
+                //     return l.target === d || l.source === d;
+                // })
                 .each(function () {
                     this.parentNode.appendChild(this);
                 });
