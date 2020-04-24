@@ -60,11 +60,14 @@
                         <option value="flare">
                             Зависимости библиотеки
                         </option>
-                        <option value="generator">
+                        <option value="generate">
                             Случайные данные
                         </option>
                         <option value="elibrary">
                             Цитирование (elibrary.ru)
+                        </option>
+                        <option value="covid">
+                            Авиамаршруты
                         </option>
                     </select>
                 </div>
