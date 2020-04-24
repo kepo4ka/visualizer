@@ -139,7 +139,12 @@ class CovidDB
         ";
 
 
-        return $this->db->getRow($query);
+        $airport = $this->db->getRow($query);
+
+        $query = "select airports.name, airports.city_name from destinations, airports WHERE air_to={$id} AND destinations.air_from=airports.id";
+        $airport['destinations'] = $this->db->getAll($query);
+
+        return $airport;
     }
 
 
