@@ -13,6 +13,10 @@ $(document).ready(function () {
 
     let data_source = localStorage.getItem('data_source') || 'flare';
     let node_length = parseInt(localStorage.getItem('node_length'));
+    if (node_length < 1) {
+        node_length = 10;
+    }
+
     let graph_type = localStorage.getItem('graph_type') || 'hierarchy';
 
     let url = '';
@@ -58,7 +62,11 @@ $(document).ready(function () {
 
     $node_count_input.on('change', function () {
         preloaderActivate();
-        node_length = parseInt($(this).val()) || 10;
+        node_length = parseInt($(this).val());
+        if (node_length < 1) {
+            node_length = 10;
+        }
+
         localStorage.setItem('node_length', node_length);
         getDataUrl();
     });
@@ -77,10 +85,15 @@ $(document).ready(function () {
 
                 url = '/ajax.php?source=elibrary&l=' + node_length;
                 break;
-            case 'generator':
+            case 'generate':
                 $node_count_container.show();
                 $node_count_input.val(node_length);
                 url = '/ajax.php?source=generate&l=' + node_length;
+                break;
+            case 'covid':
+                $node_count_container.show();
+                $node_count_input.val(node_length);
+                url = '/ajax.php?source=covid&l=' + node_length;
                 break;
         }
 
@@ -700,7 +713,7 @@ $(document).ready(function () {
                         return true;
                     }
                 })
-                .classed("link--rubric_md5", function (l) {
+                .classed("link--source", function (l) {
                     if (l.source === d) {
                         l.target.have_target = true;
                         return true;
