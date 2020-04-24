@@ -51,7 +51,8 @@ $resriction_types = [
                 Визуализация
             </h1>
 
-            <div class="d-flex align-items-center flex-column bg-white mx-2 my-4 p-2 rounded">
+
+            <div class="d-flex align-items-center flex-column bg-white mx-2 mb-4 p-2 rounded">
                 <label class="text-center m-0 font-weight-light">
                     Вид графа
                 </label>
@@ -162,6 +163,12 @@ $resriction_types = [
                 </div>
             </div>
 
+            <div class="d-flex align-items-center flex-column  my-1 p-2 rounded">
+                <button class="btn btn-primary reload_ajax_data_handler" >
+                    <i class="fa fa-retweet"></i>
+                    Перезагрузить
+                </button>
+            </div>
 
         </div>
 

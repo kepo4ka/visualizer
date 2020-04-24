@@ -11,6 +11,7 @@ $(document).ready(function () {
     const $node_relations_incoming = $('.node_relations_incoming');
     const $restriction_filter_input_container = $('#restriction_filter_input_container');
     const $modal_info_container = $('#modal_info_container');
+    const $reload_ajax_data_handler = $('.reload_ajax_data_handler');
 
 
     let data_source = localStorage.getItem('data_source') || 'flare';
@@ -177,7 +178,12 @@ $(document).ready(function () {
                 global_cl = FilterGlobalData(global_cl_not_filtered, filter);
                 updateData(global_cl);
 
-            })
+            });
+
+        $('.reload_ajax_data_handler').on('click', function () {
+            $(this).attr('disabled', true);
+            getDataUrl();
+        });
 
     }
 
@@ -249,6 +255,7 @@ $(document).ready(function () {
         $preloader.fadeOut();
         $full_preloader.hide();
         $node_count_input.attr('disabled', false);
+        $reload_ajax_data_handler.attr('disabled', false);
 
     }
 
