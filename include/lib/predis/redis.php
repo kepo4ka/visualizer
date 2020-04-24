@@ -3,10 +3,11 @@
 
 require_once(__DIR__ . '/autoload.php');
 
+$redis = new \Predis\Client();
 try {
-    $redis = new \Predis\Client();
-} catch (Exception $e) {
-    die($e->getMessage());
+    $redis->connect();
+} catch (Predis\Connection\ConnectionException $e) {
+    $redis_enabled = false;
 }
 
 
