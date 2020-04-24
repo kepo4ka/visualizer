@@ -220,13 +220,12 @@ $resriction_types = [
             </div>
 
 
-            <div class="node_relations_outcoming node_relations">
+            <div class="node_relations_outcoming node_relations d-none">
             </div>
 
-            <div class="node_relations_incoming node_relations">
+            <div class="node_relations_incoming node_relations d-none">
             </div>
         </div>
-
 
     </div>
 </div>
@@ -406,6 +405,29 @@ $resriction_types = [
                     </tr>
 
                     </tbody>
+                </table>
+
+
+                <table class="table-bordered table table-hover">
+
+                    <thead class="">
+                    <tr>
+                        <td colspan="2" class="text-center bg-info text-white font-weight-bold">
+                            Входящие авианаправления
+                        </td>
+                    </tr>
+                    <tr class="font-weight-bold">
+                        <td  class="text-primary">
+                           Аэропорт
+                        </td>
+                        <td  class=" text-primary">
+                           Город
+                        </td>
+                    </tr>
+                    </thead>
+                    <tbody class="airport_destinations_list">
+                    </tbody>
+
                 </table>
 
 
