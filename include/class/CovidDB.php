@@ -39,7 +39,7 @@ class CovidDB
 
             $airport['name'] = $airport['id'];
 
-            $query = "select countries.name, countries.continent FROM cities, countries, airports
+            $query = "select countries.restriction_type, countries.restriction_text, countries.name, countries.continent FROM cities, countries, airports
             where airports.id={$airport['id']} AND 
             airports.city_id=cities.id AND
             cities.country_iso=countries.iso
@@ -47,25 +47,25 @@ class CovidDB
 
             $airport['country'] = $this->db->getRow($query);
 
-            $airport['title1'] = $airport['city_name'] . ' > ' . $airport['country']['name'] . ' > ' . $airport['country']['continent'];
+            $airport['title1'] = $airport['city_name'] . ' > ' . $airport['country']['name'] . ' > ' . $airport['country']['continent'] .
+            ' [' . $airport['country']['restriction_type'] . '] ';
 
             $airport['rubric'] = "{$airport['country']['continent']}.{$airport['country']['name']}.{$airport['city_name']}";
 //            $airport['rubric_md5'] = ' .' . splitMd5($airport['rubric']);
 //            $airport['name'] = $airport['rubric_md5'] . $airport['name'];
 
-            $query = "select `air_to` from {$this->destinations} WHERE air_from={$airport['id']}";
+            $query = "select `air_from` from {$this->destinations} WHERE air_to={$airport['id']}";
             $airport['destinations'] = $this->db->getCol($query);
             $airport['imports'] = $airport['destinations'];
             unset($airport['destinations']);
             unset($airport['country']);
-            unset($airport['id']);
         }
         unset($airport);
 
 
         $airports = clearEmptyReferences($airports, PRIMARY_FIELD, REFEREFCES_FIELD);
 
-
+        $imports_count = 0;
         foreach ($airports as &$airport) {
             $airport['rubric_md5'] = ' .' . splitMd5($airport['rubric']);
             $airport['name'] = $airport['rubric_md5'] . $airport['name'];
@@ -77,7 +77,15 @@ class CovidDB
                     airports.city_id=cities.id AND
                     cities.country_iso=countries.iso";
 
+//                $query .= " AND countries.restriction_type='non-global_restriction'";
+
+
                 $country_info = $this->db->getRow($query);
+
+                if (empty($country_info)) {
+                    unset($destination);
+                    continue;
+                }
 
                 $rubric = "{$country_info['continent']}.{$country_info['country_name']}.{$country_info['city_name']}";
                 $rubric_md5 = ' .' . splitMd5($rubric);
@@ -88,6 +96,12 @@ class CovidDB
 //            unset($airport['city_id']);
         }
         unset($airport);
+
+        foreach ($airports as $airport) {
+            if (empty($airport['imports'])) {
+                $airport['imports'][] = $airport['name'];
+            }
+        }
 
 
         return $airports;
