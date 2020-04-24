@@ -49,6 +49,11 @@ body, html {
     fill: #1d94ff ;
 }
 
+.node--selected {
+    stroke: #9269ff;
+}
+
+
 .link--source,
 .link--target {
     stroke-opacity: 1;
@@ -265,4 +270,11 @@ body, html {
         opacity: 0;
         -webkit-transform: translateX(300px);
     }
+}
+
+
+.dashboardcode-bsmultiselect ul.form-control>li.badge {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
