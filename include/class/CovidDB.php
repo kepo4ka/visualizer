@@ -116,7 +116,7 @@ class CovidDB
         cities.population as city_population,
         cities.population as city_population,
         countries.name as country_name,
-        countries.continent as country_continent,
+        countries.iso as country_iso,
         countries.continent as country_continent,
         countries.alternate_names as country_alter_name,
         countries.restriction_type,
@@ -137,9 +137,27 @@ class CovidDB
         and airports.city_id=cities.id AND 
         cities.country_iso = countries.iso
         ";
-
-
         $airport = $this->db->getRow($query);
+
+        $query = " select 
+                 covid.date as covid_date, 
+                 covid.confirmed as covid_confirmed, 
+                 covid.recovered as covid_recovered, 
+                 covid.deaths as covid_deaths, 
+                 covid.confirmed_new as covid_confirmed_new, 
+                 covid.recovered_new as covid_recovered_new, 
+                 covid.deaths_new as covid_deaths_new 
+            from covid, countries 
+            where 
+                covid.iso=countries.iso AND countries.iso='${airport['country_iso']}'
+            order by covid_date desc";
+
+        $info = $this->db->getRow($query);
+
+        foreach ($info as $key => $value) {
+            $airport[$key] = $info[$key];
+        }
+
 
         $query = "select airports.name, airports.city_name from destinations, airports WHERE air_to={$id} AND destinations.air_from=airports.id";
         $airport['destinations'] = $this->db->getAll($query);
