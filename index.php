@@ -22,7 +22,9 @@ $resriction_types = [
     <link rel="stylesheet" href="assets/lib/bootstrap4/bootstrap.min.css">
     <link rel="stylesheet" href="assets/lib/jquery-nice-select-1.1.0/css/nice-select.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    <!--    <link rel="stylesheet" href="assets/lib/font/css/all.min.css">-->
     <link rel="stylesheet" href="assets/lib/bootstrap_multiselect/BsMultiSelect.min.css">
+    <script src="assets/lib/font/js/all.js"></script>
 
     <link rel="stylesheet" href="assets/css/helper.css">
     <link rel="stylesheet" href="assets/css/style.css">
@@ -164,7 +166,7 @@ $resriction_types = [
             </div>
 
             <div class="d-flex align-items-center flex-column  my-1 p-2 rounded">
-                <button class="btn btn-primary reload_ajax_data_handler" >
+                <button class="btn btn-primary reload_ajax_data_handler">
                     <i class="fa fa-retweet"></i>
                     Перезагрузить
                 </button>
@@ -257,6 +259,7 @@ $resriction_types = [
                     <thead class="bg-primary text-white">
                     <tr>
                         <td colspan="2" class="text-center">
+                            <i class="fa fa-mosque"></i>
                             Город: <span class="city_name font-weight-bold"></span>
                         </td>
                     </tr>
@@ -305,6 +308,7 @@ $resriction_types = [
                     <thead class="bg-success text-white ">
                     <tr>
                         <td colspan="2" class="text-center ">
+                            <i class="fa fa-flag-usa"></i>
                             Страна: <span class="country_name font-weight-bold"></span>
                         </td>
                     </tr>
@@ -325,30 +329,6 @@ $resriction_types = [
                             Континент
                         </td>
                         <td class="country_continent">
-                        </td>
-                    </tr>
-
-                    <tr class="text-danger">
-                        <td>
-                            Ограничения на въезд (COVID-19)
-                        </td>
-                        <td class="restriction_type">
-                        </td>
-                    </tr>
-
-                    <tr class="text-danger">
-                        <td>
-                            Описание ограничения (COVID-19)
-                        </td>
-                        <td class="restriction_text">
-                        </td>
-                    </tr>
-
-                    <tr class="text-danger">
-                        <td>
-                            Последнее обновление информации (COVID-19)
-                        </td>
-                        <td class="restriction_update_time">
                         </td>
                     </tr>
 
@@ -417,18 +397,106 @@ $resriction_types = [
 
                 <table class="table-bordered table table-hover">
 
+                    <thead class="bg-danger text-white ">
+                    <tr>
+                        <td colspan="2" class="text-center ">
+                            <i class="fa fa-biohazard"></i>
+                            Информация о COVID-19 на <span class="covid_date font-weight-bold"></span>
+                        </td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr >
+                        <td>
+                            Ограничения на въезд
+                        </td>
+                        <td class="restriction_type">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Описание ограничения
+                        </td>
+                        <td class="restriction_text">
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td>
+                            Общее количество заражённых
+                        </td>
+
+                        <td class="covid_confirmed">
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Общее количество выздоровевших
+                        </td>
+
+                        <td class="covid_recovered">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Общее количество погибших
+                        </td>
+
+                        <td class="covid_deaths">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Количество новых заражённых (за сутки)
+                        </td>
+
+                        <td class="covid_confirmed_new">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Количество выздоровевших (за сутки)
+                        </td>
+
+                        <td class="covid_recovered_new">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Количество смертельных исходов (за сутки)
+                        </td>
+
+                        <td class="covid_deaths_new">
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+
+
+                <table class="table-bordered table table-hover">
+
                     <thead class="">
                     <tr>
                         <td colspan="2" class="text-center bg-info text-white font-weight-bold">
+                            <i class="fa fa-plane-arrival"></i>
                             Входящие авианаправления
                         </td>
                     </tr>
                     <tr class="font-weight-bold">
-                        <td  class="text-primary">
-                           Аэропорт
+                        <td class="text-primary">
+                            Аэропорт
                         </td>
-                        <td  class=" text-primary">
-                           Город
+                        <td class=" text-primary">
+                            Город
                         </td>
                     </tr>
                     </thead>
