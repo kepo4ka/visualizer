@@ -32,7 +32,7 @@ switch ($type) {
 
         break;
 
-    case 'airport':
+    case 'single':
         $id = (int)$_GET['id'];
 
         if (empty($id)) {
@@ -45,6 +45,7 @@ switch ($type) {
             $info = $covid->getAirportFullInfo($id);
             redisSet($key, $info);
         }
+        break;
 
 
 }
