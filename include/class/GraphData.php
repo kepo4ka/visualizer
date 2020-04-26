@@ -154,14 +154,99 @@ class GraphData
     }
 
 
-    function PublicationsRelByPopolarRubris($group = false, $limit = 0)
+    function PublicationsRelByRubris($orgsid = 5051, $limit = 0)
+    {
+        global $db;
+
+        $query = "select publications.id,
+            title,
+            year,
+            language,
+            rubric,
+            in_rinc
+            from publications, publications_to_organisations 
+            where publications.id=publications_to_organisations.publicationid 
+            and 
+            publications.rubric<>''
+            AND 
+              publications_to_organisations.orgsid=$orgsid";
+
+        if (!empty($limit)) {
+            $query .= " limit $limit";
+        }
+
+        $publications = $db->getAll($query);
+
+
+        foreach ($publications as &$publication) {
+            $publication['name'] = $publication['id'];
+            $publication['title1'] = $publication['title'];
+
+            $query = "select end_publ_id FROM 
+              publications_to_publications, publications_to_organisations
+              WHERE 
+                  publications_to_publications.origin_publ_id={$publication['id']}
+              AND 
+                  publications_to_publications.end_publ_id=publications_to_organisations.publicationid
+              AND
+                  publications_to_organisations.orgsid={$orgsid}
+              ";
+
+            $publication['imports'] = $db->getCol($query);
+            unset($publication['id']);
+        }
+        unset($publication);
+
+       $publications = clearEmptyReferences($publications, PRIMARY_FIELD, REFEREFCES_FIELD);
+
+
+        foreach ($publications as &$publication) {
+            $publication['rubric_md5'] = ' .' . splitMd5($publication['rubric']);
+            $publication['name'] = $publication['rubric_md5'] . $publication['name'];
+
+            foreach ($publication['imports'] as &$rel_publication) {
+                $query = "select rubric from publications 
+                    where publications.id={$rel_publication}";
+                $rel_publication_info = $db->getRow($query);
+
+                if (empty($rel_publication_info)) {
+                    unset($rel_publication);
+                    continue;
+                }
+
+                $rubric_md5 = ' .' . splitMd5($rel_publication_info['rubric']);
+                $rel_publication = $rubric_md5 . $rel_publication;
+
+            }
+            unset($rel_publication);
+        }
+        unset($publication);
+
+        return $publications;
+    }
+
+
+    function PublicationsRelByPopolarRubris()
     {
         $graph_items = [];
+
+        $orgsid = 5051;
+
+        $query = "select publications.id,
+            year,
+            language,
+            rubric,
+            in_rinc,
+            from publications, publications_to_organisations 
+            where publications.id=publications_to_organisations.publicationid 
+            AND 
+              publications_to_organisations.orgsid=$orgsid";
+
+
         $items_db = $this->elibDb->getAll('publications', 1000);
 
 
         foreach ($items_db as $current_item) {
-
             $new_item = [];
             $new_item['name'] = $current_item['id'];
             $new_item['title'] = $current_item['title'];
