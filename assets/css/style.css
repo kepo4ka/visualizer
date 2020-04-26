@@ -39,15 +39,19 @@ body, html {
 
 .node--source {
     fill: #28a745;
+
 }
 
 .node--target {
     fill: #dc3545;
+    stroke-opacity: 1 !important;
 }
 
 .node--source.node--target {
     fill: #1d94ff ;
 }
+
+
 
 .node--selected {
     stroke: #9269ff;
@@ -56,8 +60,8 @@ body, html {
 
 .link--source,
 .link--target {
-    stroke-opacity: 1;
-    stroke-width: 3px;
+    stroke-width: 10px;
+    stroke-opacity: 1 !important;
 
 }
 
