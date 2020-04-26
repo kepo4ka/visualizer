@@ -22,7 +22,7 @@ $resriction_types = [
     <link rel="stylesheet" href="assets/lib/bootstrap4/bootstrap.min.css">
     <link rel="stylesheet" href="assets/lib/jquery-nice-select-1.1.0/css/nice-select.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
-    <!--    <link rel="stylesheet" href="assets/lib/font/css/all.min.css">-->
+        <link rel="stylesheet" href="assets/lib/font/css/all.min.css">
     <link rel="stylesheet" href="assets/lib/bootstrap_multiselect/BsMultiSelect.min.css">
     <script src="assets/lib/font/js/all.js"></script>
 
@@ -84,12 +84,14 @@ $resriction_types = [
                         <option value="generate">
                             Случайные данные
                         </option>
-                        <option value="elibrary">
-                            Цитирование (elibrary.ru)
-                        </option>
                         <option value="covid">
                             Авиамаршруты
                         </option>
+
+                        <option value="elibrary">
+                            СОГУ
+                        </option>
+
                     </select>
                 </div>
 
@@ -165,9 +167,11 @@ $resriction_types = [
                 </div>
             </div>
 
-            <div class="d-flex align-items-center flex-column  my-1 p-2 rounded">
+            <div class="d-flex align-items-center flex-column  mt-5 p-2 rounded">
                 <button class="btn btn-primary reload_ajax_data_handler">
-                    <i class="fa fa-retweet"></i>
+                    <i class="fa fa-sync not_loading d-none"></i>
+
+                    <i class="fa fa-sync fa-spin loading "></i>
                     Перезагрузить
                 </button>
             </div>
