@@ -193,11 +193,10 @@ class GraphData
               ";
 
             $publication['imports'] = $db->getCol($query);
-            unset($publication['id']);
         }
         unset($publication);
 
-       $publications = clearEmptyReferences($publications, PRIMARY_FIELD, REFEREFCES_FIELD);
+        $publications = clearEmptyReferences($publications, PRIMARY_FIELD, REFEREFCES_FIELD);
 
 
         foreach ($publications as &$publication) {
@@ -281,6 +280,34 @@ class GraphData
         return $graph_items;
     }
 
+
+    function getPublicationFullInfo($id)
+    {
+        global $db;
+
+        $query = "select * from publications 
+        where id={$id}";
+
+
+        $publication = $db->getRow($query);
+
+        $publication['rubric'] = preg_replace('/_/', ' ', $publication['rubric']);
+        $publication['rubric'] = preg_replace('/\./', ',', $publication['rubric']);
+
+
+        $query = "select 
+        publication.title, 
+        publication.year
+            
+         "
+
+
+
+        $query = "select airports.name, airports.city_name from destinations, airports WHERE air_to={$id} AND destinations.air_from=airports.id";
+        $airport['destinations'] = $this->db->getAll($query);
+
+        return $airport;
+    }
 
 }
 
