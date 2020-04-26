@@ -60,7 +60,7 @@ body, html {
 
 .link--source,
 .link--target {
-    stroke-width: 10px;
+    stroke-width: 5px;
     stroke-opacity: 1 !important;
 
 }
