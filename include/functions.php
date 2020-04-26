@@ -632,28 +632,42 @@ function clearEmptyReferences($list, $primary_field, $imports_field)
     }
 
 
-    unset($item);
-
-    $new_info = [];
+    $filtered_list = [];
 
     foreach ($list as $key => $item) {
         $temp = $item;
         $temp[$imports_field] = [];
 
-        foreach ($item[$imports_field] as $key1 => $item1) {
-            foreach ($names as $name) {
-                if ($item1 === $name) {
-                    $temp[$imports_field][] = $item1;
-                    break;
-                }
+
+        foreach ($item[$imports_field] as $item1) {
+
+            if (in_array($item1, $names)) {
+                $temp[$imports_field][] = $item1;
             }
         }
 
         if (empty($temp[$imports_field])) {
-               continue;
+//              continue;
         }
-        $new_info[] = $temp;
+        $filtered_list[] = $temp;
     }
 
-    return $new_info;
+    $list = $filtered_list;
+    $filtered_list = [];
+
+
+    $imports = [];
+
+    foreach ($list as $item) {
+        $imports = array_merge($imports, $item['imports']);
+        $imports = array_unique($imports);
+    }
+    unset($item);
+
+    foreach ($list as $item) {
+        if (in_array($item[$primary_field], $imports) || !empty($item[$imports_field])) {
+            $filtered_list[] = $item;
+        }
+    }
+    return $filtered_list;
 }
