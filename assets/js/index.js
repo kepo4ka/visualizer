@@ -925,6 +925,9 @@ $(document).ready(function () {
             $modal_info__airport.find('.' + keys[i]).text(info[keys[i]]);
         }
 
+        $modal_info__airport.find('.modal-title').text(info['airport_name']);
+
+
         $airport_destinations_list = $modal_info__airport.find('.airport_destinations_list');
 
         for (let i = 0; i < info['destinations'].length; i++) {
