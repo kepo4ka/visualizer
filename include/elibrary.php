@@ -57,7 +57,8 @@ switch ($type) {
         //getTime($start);
         break;
     case 'PublicationsRelByRubris':
-        $info = $graph_data->PublicationsRelByRubris(5051, 2000);
+
+        $info = $graph_data->PublicationsRelByRubris(5051, $length);
 
         break;
 
