@@ -164,8 +164,6 @@ class CovidDB
 
         return $airport;
     }
-
-
 }
 
 

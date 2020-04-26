@@ -16,8 +16,9 @@ $(document).ready(function () {
 
     let data_source = localStorage.getItem('data_source') || 'flare';
     let node_length = parseInt(localStorage.getItem('node_length')) || 10;
-    if (node_length < 1) {
-        node_length = 10;
+    if (node_length <1 || node_length> 5000) {
+        node_length = 100;
+        localStorage.setItem('node_length', node_length);
     }
 
     let graph_type = localStorage.getItem('graph_type') || 'hierarchy';
@@ -112,8 +113,15 @@ $(document).ready(function () {
         $graph_type_handler.val(graph_type);
 
         d3.json(url, function (er, cl) {
-            global_cl_not_filtered = JSON.parse(JSON.stringify(cl));
-            updateData(cl);
+            try {
+                global_cl_not_filtered = JSON.parse(JSON.stringify(cl));
+                updateData(cl);
+            }
+            catch (e) {
+                alert("Не удалось загрузить данные!");
+                console.log(e);
+                preloaderDisable();
+            }
         });
 
     }
@@ -182,6 +190,9 @@ $(document).ready(function () {
 
         $('.reload_ajax_data_handler').on('click', function () {
             $(this).attr('disabled', true);
+            $(this).find('.not_loading').addClass('d-none');
+            $(this).find('.loading').removeClass('d-none');
+
             getDataUrl();
         });
 
@@ -256,6 +267,8 @@ $(document).ready(function () {
         $full_preloader.hide();
         $node_count_input.attr('disabled', false);
         $reload_ajax_data_handler.attr('disabled', false);
+        $reload_ajax_data_handler.find('.not_loading').removeClass('d-none');
+        $reload_ajax_data_handler.find('.loading').addClass('d-none');
 
     }
 
