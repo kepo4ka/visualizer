@@ -10,13 +10,14 @@ $(document).ready(function () {
     const $node_relations_outcoming = $('.node_relations_outcoming');
     const $node_relations_incoming = $('.node_relations_incoming');
     const $restriction_filter_input_container = $('#restriction_filter_input_container');
-    const $modal_info_container = $('#modal_info_container');
+    const $modal_info__airport = $('#modal_info__airport');
+    const $modal_info__publication = $('#modal_info__publication');
     const $reload_ajax_data_handler = $('.reload_ajax_data_handler');
 
 
     let data_source = localStorage.getItem('data_source') || 'flare';
     let node_length = parseInt(localStorage.getItem('node_length')) || 10;
-    if (node_length <1 || node_length> 5000) {
+    if (node_length < 1 || node_length > 5000) {
         node_length = 100;
         localStorage.setItem('node_length', node_length);
     }
@@ -370,6 +371,7 @@ $(document).ready(function () {
 
                 switch (data_source) {
                     case 'covid':
+                    case 'elibrary':
                         getAjaxAirportInfo(d.data.id);
                         break;
                 }
@@ -865,25 +867,45 @@ $(document).ready(function () {
 
         $.ajax({
             method: "get",
-            url: "ajax.php?source=covid&type=airport",
+            url: "ajax.php",
             data: {
-                source: 'covid',
-                type: 'airport',
+                source: data_source,
+                type: 'single',
                 id: id
             },
             dataType: 'json',
             success: function (response) {
-                setModalInfo(response);
+                switch (data_source) {
+                    case 'covid':
+                        setAirportModal(response);
+                        break;
+                    case 'elibrary':
+                        setPublicationModal(response);
+                        break;
+                }
+
 
             },
             error: function () {
-                alert('Не удалось получить информацию об Аэропорте!');
+                alert('Не удалось получить информацию!');
             }
         });
     }
 
+    function setPublicationModal(info) {
+        let keys = Object.keys(info);
+        for (let i = 0; i < keys.length; i++) {
+            if (info[keys[i]] == null) {
+                info[keys[i]] = '-';
+            }
+            $modal_info__publication.find('.' + keys[i]).text(info[keys[i]]);
+        }
 
-    function setModalInfo(info) {
+        $list = $modal_info__publication.find('.list');
+    }
+
+
+    function setAirportModal(info) {
 
         let keys = Object.keys(info);
 
@@ -898,13 +920,12 @@ $(document).ready(function () {
             }
 
             if (keys[i] == 'restriction_type') {
-                console.log(info[keys[i]], resriction_types);
                 info[keys[i]] = resriction_types[info[keys[i]]];
             }
-            $modal_info_container.find('.' + keys[i]).text(info[keys[i]]);
+            $modal_info__airport.find('.' + keys[i]).text(info[keys[i]]);
         }
 
-        $airport_destinations_list = $modal_info_container.find('.airport_destinations_list');
+        $airport_destinations_list = $modal_info__airport.find('.airport_destinations_list');
 
         for (let i = 0; i < info['destinations'].length; i++) {
             let keys = Object.keys(info['destinations'][i]);
@@ -918,7 +939,7 @@ $(document).ready(function () {
         }
 
 
-        $modal_info_container.modal('show');
+        $modal_info__airport.modal('show');
     }
 
 
