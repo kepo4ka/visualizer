@@ -61,6 +61,22 @@ switch ($type) {
 
         break;
 
+
+    case 'single':
+        $id = (int)$_GET['id'];
+
+        if (empty($id)) {
+            die;
+        }
+
+        $key = "elibrary_publication_info:$id";
+        $info = redisGet($key);
+        if (empty($info)) {
+            $info = $graph_data->getPublicationFullInfo($id);
+            redisSet($key, $info);
+        }
+        break;
+
 }
 echo json_encode($info, JSON_UNESCAPED_UNICODE);
 exit;
