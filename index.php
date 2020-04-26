@@ -49,8 +49,10 @@ $resriction_types = [
 
     <div class="row h-100 ">
         <div class="col-2 bg-secondary p-0">
-            <h1 class="border-bottom p-0 m-0 text-center text-white pb-1">
-                Визуализация
+            <h1 class="border-bottom pb-2 mt-0 text-center text-white pb-1">
+                <a class="text-white text-decoration-none" href="/">
+                    Визуализация
+                </a>
             </h1>
 
 
@@ -89,7 +91,7 @@ $resriction_types = [
                         </option>
 
                         <option value="elibrary">
-                            СОГУ
+                            Цитирование
                         </option>
 
                     </select>
@@ -157,7 +159,7 @@ $resriction_types = [
                     </div>
                 </div>
 
-                <div class="border-bottom d-flex align-items-center flex-column w-100">
+                <div class=" d-flex align-items-center flex-column w-100">
                     <label class="text-center mt-3 mb-0 font-weight-light">
                         Прозрачность = <span id="link_opacity_value" class="font-weight-bold">1</span>
                     </label>
@@ -245,7 +247,7 @@ $resriction_types = [
 
 
 <!-- Modal -->
-<div class="modal fade" id="modal_info_container" role="dialog" aria-hidden="false">
+<div class="modal fade" id="modal_info__airport" role="dialog" aria-hidden="false">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
