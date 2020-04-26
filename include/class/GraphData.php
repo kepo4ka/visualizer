@@ -294,13 +294,7 @@ class GraphData
         $publication['rubric'] = preg_replace('/_/', ' ', $publication['rubric']);
         $publication['rubric'] = preg_replace('/\./', ',', $publication['rubric']);
 
-
-        $query = "select 
-        publication.title, 
-        publication.year
-            
-         "
-
+        return false;
 
 
         $query = "select airports.name, airports.city_name from destinations, airports WHERE air_to={$id} AND destinations.air_from=airports.id";
