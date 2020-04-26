@@ -15,7 +15,7 @@ $db = new SafeMysql(array('host' => $host, 'user' => $user, 'pass' => $pass, 'db
 if (!empty($_GET['type'])) {
     $type = preg_replace('/[^\w]/m', '', $_GET['type']);
 } else {
-    $type = 'AuthorsRelByPublications';
+    $type = 'PublicationsRelByRubris';
 }
 
 
@@ -56,23 +56,11 @@ switch ($type) {
         }
         //getTime($start);
         break;
-    case 'PublicationsRelByPopolarRubris':
-        $info = $graph_data->PublicationsRelByPopolarRubris(true, $length);
-//      $elib = new ElibraryDB();
-//        $info = $elib->updateRublics();
+    case 'PublicationsRelByRubris':
+        $info = $graph_data->PublicationsRelByRubris(5051, 2000);
+
         break;
 
 }
-
-
-$info = clearEmptyReferences($info, PRIMARY_FIELD, REFEREFCES_FIELD);
-
-foreach ($info as &$item)
-{
-    unset($item['fio']);
-    unset($item['post']);
-}
-unset($item);
-
 echo json_encode($info, JSON_UNESCAPED_UNICODE);
 exit;
