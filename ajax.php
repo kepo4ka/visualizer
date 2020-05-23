@@ -20,10 +20,10 @@ switch ($source) {
         break;
 
     case 'elibrary':
-        require_once __DIR__ . '/include/elibrary.php';
+        require_once __DIR__ . '/include/citation.php';
         break;
     case 'covid':
-        require_once __DIR__ . '/include/covid.php';
+        require_once __DIR__ . '/include/avia.php';
         break;
 
     default:
