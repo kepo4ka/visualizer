@@ -17,7 +17,9 @@ $resriction_types = [
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>
+		Визуализация графовых методов
+	</title>
 
     <link rel="stylesheet" href="assets/lib/bootstrap4/bootstrap.min.css">
     <link rel="stylesheet" href="assets/lib/jquery-nice-select-1.1.0/css/nice-select.css">
