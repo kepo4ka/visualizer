@@ -47,6 +47,10 @@ switch ($type) {
         }
         break;
 
+    case 'update':
+        $info = $covid->updateCountriesCovidInfo();
+        break;
+
 
 }
 

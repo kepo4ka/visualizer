@@ -1,4 +1,8 @@
 <?php
+
+use Helper\DB;
+use Helper\Helper;
+
 require_once __DIR__ . '/../init.php';
 
 class CovidDB
@@ -164,7 +168,29 @@ class CovidDB
 
         return $airport;
     }
+
+
+    function updateCountriesCovidInfo()
+    {
+        $url = 'https://insysbio.github.io/covid-19-data/hopkins/json/_combined.json';
+
+        $countries = json_decode(Helper::fetch($url), true);
+
+        foreach ($countries as $key => $country) {
+            $info['iso'] = $country['country_code'];
+            $info['name'] = $country['Country.Region'];
+//        DB::save($info, 'countries', 'iso');
+
+            foreach ($country['timeseries'] as $timesery) {
+                $timesery['iso'] = $info['iso'];
+                DB::save($timesery, 'covid');
+            }
+        }
+        return true;
+    }
 }
+
+
 
 
 ?>
