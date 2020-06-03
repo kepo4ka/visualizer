@@ -127,6 +127,10 @@ $resriction_types = [
 
 
                             </select>
+
+                            <a class="btn-link " target="_blank" href="/ajax.php?source=covid&type=update">
+                                Обновить данные
+                            </a>
                         </div>
                     </div>
                 </div>
