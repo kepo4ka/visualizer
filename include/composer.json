@@ -1,12 +1,11 @@
 {
-    "name": "kepo4ka/visualizer",
-    "authors": [
-        {
-            "name": "kepo4ka",
-            "email": "konstantin.bugulov@mail.ru"
-        }
-    ],
     "require": {
-        "kepo4ka/helper": "dev-master"
-    }
+        "kepo4ka/helper": "dev-master",
+        "leafs/leaf": "2.0"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/kepo4ka/myHelper.git"
+        }]
 }
