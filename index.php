@@ -18,13 +18,13 @@ $resriction_types = [
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>
-		Визуализация графовых методов
-	</title>
+        Визуализация графовых методов
+    </title>
 
     <link rel="stylesheet" href="assets/lib/bootstrap4/bootstrap.min.css">
     <link rel="stylesheet" href="assets/lib/jquery-nice-select-1.1.0/css/nice-select.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
-        <link rel="stylesheet" href="assets/lib/font/css/all.min.css">
+    <link rel="stylesheet" href="assets/lib/font/css/all.min.css">
     <link rel="stylesheet" href="assets/lib/bootstrap_multiselect/BsMultiSelect.min.css">
     <script src="assets/lib/font/js/all.js"></script>
 
@@ -125,13 +125,17 @@ $resriction_types = [
                                     <?php
                                 } ?>
 
-
                             </select>
 
-                            <a class="btn-link " target="_blank" href="/ajax.php?source=covid&type=update">
-                                Обновить данные
-                            </a>
                         </div>
+
+
+<!--                        <div class="flex_centered m-2 w-100 px-4">-->
+<!---->
+<!--                            <a class="btn-link" target="_blank" href="/ajax.php?source=covid&type=update">-->
+<!--                                Обновить данные-->
+<!--                            </a>-->
+<!--                        </div>-->
                     </div>
                 </div>
             </div>
@@ -417,7 +421,7 @@ $resriction_types = [
                     </tr>
                     </thead>
                     <tbody>
-                    <tr >
+                    <tr>
                         <td>
                             Ограничения на въезд
                         </td>
