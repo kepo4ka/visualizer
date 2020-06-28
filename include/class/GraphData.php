@@ -1,6 +1,8 @@
 <?php
 
 
+use Helper\DB;
+
 class GraphData
 {
     var $elibDb;
@@ -9,6 +11,7 @@ class GraphData
     {
         $this->elibDb = new ElibraryDB();
     }
+
 
     function OrganisationsRelByAuthors($length = 100)
     {
@@ -283,24 +286,49 @@ class GraphData
 
     function getPublicationFullInfo($id)
     {
-        global $db;
-
-        $query = "select * from publications 
-        where id={$id}";
-
-
-        $publication = $db->getRow($query);
+        $publication = DB::getById('publications', $id);
 
         $publication['rubric'] = preg_replace('/_/', ' ', $publication['rubric']);
-        $publication['rubric'] = preg_replace('/\./', ',', $publication['rubric']);
 
-        return false;
+        $authors_ids = DB::getByColAll('publications_to_authors', 'publicationid', $id);
+        $relations_ids = DB::getByColAll('publications_to_publications', 'origin_publ_id', $id);
+        $keywords_ids = DB::getByColAll('publications_to_keywords', 'publicationid', $id);
+
+        foreach ($authors_ids as $author_id) {
+            $author = DB::getById('authors', $author_id['authorid']);
+            unset($author['id']);
+            $publication['authors'][] = $author;
+        }
+
+        foreach ($relations_ids as $relations_id) {
+            $relation = DB::getById('publications', $relations_id['end_publ_id']);
+            $filtered = [];
+
+            $filtered['title'] = $relation['title'];
+            $filtered['type'] = $relation['type'];
+            $filtered['year'] = $relation['year'];
+            $filtered['rubric'] = preg_replace('/_/', ' ', $relation['rubric']);
 
 
-        $query = "select airports.name, airports.city_name from destinations, airports WHERE air_to={$id} AND destinations.air_from=airports.id";
-        $airport['destinations'] = $this->db->getAll($query);
+            $publication['relations'][] = $filtered;
+        }
 
-        return $airport;
+        $publication['keywords'] = '';
+
+        foreach ($keywords_ids as $keyword_id) {
+            $keyword = DB::getById('keywords', $keyword_id['keywordid']);
+
+            if (empty($keyword)) {
+                continue;
+            }
+            $publication['keywords'] .= $keyword['name'] . ', ';
+        }
+
+       if ($keywords_ids > 1 && !empty($publication['keywords'])) {
+            $publication['keywords'] = substr($publication['keywords'], 0, -2);
+       }
+
+        return $publication;
     }
 
 }

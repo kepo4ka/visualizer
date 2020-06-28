@@ -13,6 +13,7 @@ $(document).ready(function () {
     const $modal_info__airport = $('#modal_info__airport');
     const $modal_info__publication = $('#modal_info__publication');
     const $reload_ajax_data_handler = $('.reload_ajax_data_handler');
+    const $reset_params_handler = $('.reset_params_handler');
 
 
     let data_source = localStorage.getItem('data_source') || 'flare';
@@ -117,8 +118,7 @@ $(document).ready(function () {
             try {
                 global_cl_not_filtered = JSON.parse(JSON.stringify(cl));
                 updateData(cl);
-            }
-            catch (e) {
+            } catch (e) {
                 alert("Не удалось загрузить данные!");
                 console.log(e);
                 preloaderDisable();
@@ -189,12 +189,20 @@ $(document).ready(function () {
 
             });
 
-        $('.reload_ajax_data_handler').on('click', function () {
+        $reload_ajax_data_handler.on('click', function () {
             $(this).attr('disabled', true);
             $(this).find('.not_loading').addClass('d-none');
             $(this).find('.loading').removeClass('d-none');
 
             getDataUrl();
+        });
+
+        $reset_params_handler.on('click', function () {
+            localStorage.setItem('data_source', 'flare');
+            localStorage.setItem('node_length', 100);
+            localStorage.setItem('graph_type', 'hierarchy');
+            localStorage.setItem('beta_value', 0.5);
+            window.location.reload();
         });
 
     }
@@ -372,8 +380,10 @@ $(document).ready(function () {
                 switch (data_source) {
                     case 'covid':
                     case 'elibrary':
-                        getAjaxAirportInfo(d.data.id);
+                        getAjaxModalInfo(d.data.id);
                         break;
+
+
                 }
 
             });
@@ -411,8 +421,7 @@ $(document).ready(function () {
                     if (data[j].name == p_data.imports[i]) {
                         if (data[j].title !== undefined) {
                             outcoming.push(data[j].title);
-                        }
-                        else {
+                        } else {
                             outcoming.push(data[j].name);
                         }
                         break;
@@ -425,8 +434,7 @@ $(document).ready(function () {
                     if (data[i].imports[j] == p_data.name) {
                         if (p_data.title !== undefined) {
                             incoming.push(p_data.title);
-                        }
-                        else {
+                        } else {
                             incoming.push(p_data.name);
                         }
                         break;
@@ -552,8 +560,7 @@ $(document).ready(function () {
                                 target: map[i],
                                 path: map[d.data.name].path(map[i])
                             });
-                        }
-                        catch (e) {
+                        } catch (e) {
                             return true;
                         }
 
@@ -599,8 +606,7 @@ $(document).ready(function () {
 
             if (json[i].rubric !== undefined) {
                 split_rubrics = json[i].rubric.split('.');
-            }
-            else {
+            } else {
                 split_rubrics = split_names;
             }
 
@@ -610,15 +616,13 @@ $(document).ready(function () {
             for (let j = 0; j < split_names.length; j++) {
                 if (j === 0) {
                     temp += split_names[j];
-                }
-                else {
+                } else {
                     temp += '.' + split_names[j];
                 }
 
                 if (temp_ids.includes(temp)) {
                     continue;
-                }
-                else {
+                } else {
                     temp_ids.push(temp);
                 }
 
@@ -633,8 +637,7 @@ $(document).ready(function () {
                     value = json[i].size + '';
 
                     title = json[i].title;
-                }
-                else {
+                } else {
 
                     title = split_rubrics[j - 1];
 
@@ -761,8 +764,7 @@ $(document).ready(function () {
                 d.source = index[d.source];
                 d.target = index[d.target];
                 d.path = d.source.path(d.target);
-            }
-            catch (e) {
+            } catch (e) {
                 return false;
             }
             return d.path;
@@ -774,8 +776,7 @@ $(document).ready(function () {
                 try {
                     let path = d.source.path(d.target);
                     return line(path);
-                }
-                catch (e) {
+                } catch (e) {
                     return null;
                 }
 
@@ -863,7 +864,7 @@ $(document).ready(function () {
     }
 
 
-    function getAjaxAirportInfo(id) {
+    function getAjaxModalInfo(id) {
 
         $.ajax({
             method: "get",
@@ -898,10 +899,39 @@ $(document).ready(function () {
             if (info[keys[i]] == null) {
                 info[keys[i]] = '-';
             }
-            $modal_info__publication.find('.' + keys[i]).text(info[keys[i]]);
+            $modal_info__publication.find('[data-type="' + keys[i] + '"]').text(info[keys[i]]);
         }
 
-        $list = $modal_info__publication.find('.list');
+        $modal_info__publication.find('.modal-title').text(info['title']);
+
+
+        $list = $modal_info__publication.find('.publication_authors_list');
+
+        for (let i = 0; i < info['authors'].length; i++) {
+            let keys = Object.keys(info['authors'][i]);
+
+            let tr_element = document.createElement('tr');
+            for (let j = 0; j < keys.length; j++) {
+                $(tr_element).append('<td>' + info['authors'][i][keys[j]] + "</td>");
+            }
+            $list.append($(tr_element));
+        }
+
+        $list = $modal_info__publication.find('.publication_relations_list');
+
+        for (let i = 0; i < info['relations'].length; i++) {
+            let keys = Object.keys(info['relations'][i]);
+
+            let tr_element = document.createElement('tr');
+            for (let j = 0; j < keys.length; j++) {
+                $(tr_element).append('<td>' + info['relations'][i][keys[j]] + "</td>");
+            }
+            $list.append($(tr_element));
+        }
+
+
+
+        $modal_info__publication.modal('show');
     }
 
 

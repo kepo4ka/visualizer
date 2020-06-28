@@ -1,5 +1,6 @@
 <?php
 
+
 $resriction_types = [
     'travel_ban' => 'Полный запрет',
     'travel_ban_eu' => 'Полный запрет (Европа)',
@@ -130,12 +131,12 @@ $resriction_types = [
                         </div>
 
 
-<!--                        <div class="flex_centered m-2 w-100 px-4">-->
-<!---->
-<!--                            <a class="btn-link" target="_blank" href="/ajax.php?source=covid&type=update">-->
-<!--                                Обновить данные-->
-<!--                            </a>-->
-<!--                        </div>-->
+                        <!--                        <div class="flex_centered m-2 w-100 px-4">-->
+                        <!---->
+                        <!--                            <a class="btn-link" target="_blank" href="/ajax.php?source=covid&type=update">-->
+                        <!--                                Обновить данные-->
+                        <!--                            </a>-->
+                        <!--                        </div>-->
                     </div>
                 </div>
             </div>
@@ -182,11 +183,16 @@ $resriction_types = [
             <div class="d-flex align-items-center flex-column  mt-5 p-2 rounded">
                 <button class="btn btn-primary reload_ajax_data_handler">
                     <i class="fa fa-sync not_loading d-none"></i>
-
-                    <i class="fa fa-sync fa-spin loading "></i>
+                    <i class="fa fa-sync fa-spin loading"></i>
                     Перезагрузить
                 </button>
+
+                <button class="btn btn-danger reset_params_handler mt-2" style="z-index: 9999">
+                    <i class="fa fa-window-close"></i>
+                    Сбросить
+                </button>
             </div>
+
 
         </div>
 
@@ -531,6 +537,208 @@ $resriction_types = [
     </div>
 </div>
 
+
+<!-- Modal -->
+<div class="modal fade" id="modal_info__publication" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+
+                <table class="table-bordered table table-hover">
+                    <thead class="bg-primary text-white">
+                    <tr>
+                        <td colspan="2" class="text-center">
+                            <i class="fa fa-newspaper"></i>
+                            Публикация
+                        </td>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr>
+                        <td>
+                            Тип
+                        </td>
+                        <td data-type="type">
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Дата публикации
+                        </td>
+                        <td data-type="year">
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Язык
+                        </td>
+                        <td data-type="language">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Издание
+                        </td>
+                        <td data-type="publisher">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Тематический рубрикатор
+                        </td>
+                        <td data-type="rubric">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Входит в РИНЦ
+                        </td>
+                        <td data-type="in_rinc">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Входит в ядро РИНЦ
+                        </td>
+                        <td data-type="in_rinc_ker">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Цитирований в РИНЦ
+                        </td>
+                        <td data-type="cit_in_rinc">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Цитирований из ядра РИНЦ
+                        </td>
+                        <td data-type="cit_in_rinc_ker">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Импакт-фактор
+                        </td>
+                        <td data-type="impact_factor">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Норм. цитируемость по направлению
+                        </td>
+                        <td data-type="norm_cit">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Ключевые слова
+                        </td>
+                        <td data-type="keywords">
+                        </td>
+                    </tr>
+
+
+                    </tbody>
+                </table>
+
+                <table class="table-bordered table table-hover">
+
+                    <thead class="">
+                    <tr>
+                        <td colspan="5" class="text-center bg-info text-white font-weight-bold">
+                            <i class="fa fa-address-card"></i>
+                            Авторы
+                        </td>
+                    </tr>
+                    <tr class="font-weight-bold">
+                        <td class="text-primary">
+                            ФИО
+                        </td>
+                        <td class=" text-primary">
+                            Должность
+                        </td>
+                        <td class=" text-primary">
+                            Число публикаций
+                        </td>
+                        <td class=" text-primary">
+                            Количество цитирований автора
+                        </td>
+                        <td class=" text-primary">
+                            Индекс Хирша
+                        </td>
+
+                    </tr>
+                    </thead>
+
+                    <tbody class="publication_authors_list"></tbody>
+                </table>
+
+
+                <table class="table-bordered table table-hover">
+
+                    <thead class="">
+                    <tr>
+                        <td colspan="54" class="text-center bg-success text-white font-weight-bold">
+                            <i class="fa fa-random"></i>
+                            Публикации, цитирующие эту публикацию
+                        </td>
+                    </tr>
+                    <tr class="font-weight-bold">
+                        <td class="text-primary">
+                            Название
+                        </td>
+
+                        <td class="text-primary">
+                            Тип
+                        </td>
+
+                        <td class="text-primary">
+                            Год
+                        </td>
+
+                        <td class="text-primary">
+                            Рубрика
+                        </td>
+                    </tr>
+                    </thead>
+                    <tbody class="publication_relations_list">
+                    </tbody>
+
+                </table>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    Закрыть
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script defer src="assets/lib/jquery/jquery-3.3.1.min.js"></script>
 <script defer src="assets/lib/popper.js/dist/umd/popper.min.js"></script>
