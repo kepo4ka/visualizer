@@ -213,7 +213,7 @@ $(document).ready(function () {
             .sliderBottom()
             .min(0)
             .max(1)
-            .width(200)
+            .width(100)
             .ticks(10)
             .default(beta_value)
             .on('onchange', val => {
@@ -227,7 +227,7 @@ $(document).ready(function () {
             .select('#slider-simple')
             .append('svg')
             .append('g')
-            .attr('transform', 'translate(50,30)');
+            .attr('transform', 'translate(30,30)');
 
 
         gSimple.call(sliderSimple);
@@ -239,7 +239,7 @@ $(document).ready(function () {
             .sliderBottom()
             .min(0)
             .max(1)
-            .width(200)
+            .width(100)
             .ticks(10)
             .default(link_opacity)
             .on('onchange', val => {
@@ -253,7 +253,7 @@ $(document).ready(function () {
             .select('#link_opacity_slider')
             .append('svg')
             .append('g')
-            .attr('transform', 'translate(50,30)');
+            .attr('transform', 'translate(30,30)');
 
 
         gSimple1.call(LinkOpacitySlider);
