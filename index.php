@@ -52,11 +52,11 @@ $resriction_types = [
 
     <div class="row h-100 ">
         <div class="col-2 bg-secondary p-0">
-            <h1 class="border-bottom pb-2 mt-0 text-center text-white pb-1">
+            <h4 class="border-bottom pb-2 mt-0 text-center text-white pb-1">
                 <a class="text-white text-decoration-none" href="/">
                     Визуализация
                 </a>
-            </h1>
+            </h4>
 
 
             <div class="d-flex align-items-center flex-column bg-white mx-2 mb-4 p-2 rounded">
