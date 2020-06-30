@@ -187,7 +187,7 @@ $resriction_types = [
                     Перезагрузить
                 </button>
 
-                <button class="btn btn-danger reset_params_handler mt-2" style="z-index: 9999">
+                <button class="btn btn-danger reset_params_handler mt-2" style="z-index: 9998">
                     <i class="fa fa-window-close"></i>
                     Сбросить
                 </button>
@@ -263,7 +263,7 @@ $resriction_types = [
 
 
 <!-- Modal -->
-<div class="modal fade" id="modal_info__airport" role="dialog" aria-hidden="false">
+<div class="modal fade" id="modal_info__airport" role="dialog" aria-hidden="false" style="z-index: 9999">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
