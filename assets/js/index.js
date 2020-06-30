@@ -881,6 +881,7 @@ $(document).ready(function () {
                         setAirportModal(response);
                         break;
                     case 'elibrary':
+                        console.log(response);
                         setPublicationModal(response);
                         break;
                 }
@@ -919,14 +920,19 @@ $(document).ready(function () {
 
         $list = $modal_info__publication.find('.publication_relations_list');
 
-        for (let i = 0; i < info['relations'].length; i++) {
-            let keys = Object.keys(info['relations'][i]);
+        try {
+            for (let i = 0; i < info['relations'].length; i++) {
+                let keys = Object.keys(info['relations'][i]);
 
-            let tr_element = document.createElement('tr');
-            for (let j = 0; j < keys.length; j++) {
-                $(tr_element).append('<td>' + info['relations'][i][keys[j]] + "</td>");
+                let tr_element = document.createElement('tr');
+                for (let j = 0; j < keys.length; j++) {
+                    $(tr_element).append('<td>' + info['relations'][i][keys[j]] + "</td>");
+                }
+                $list.append($(tr_element));
             }
-            $list.append($(tr_element));
+        }
+        catch (e) {
+
         }
 
 
